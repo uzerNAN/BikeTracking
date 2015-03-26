@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">BikeTracking</string>
+    <string name="title_activity_tracking">Bike Tracking Map</string>
+	<string name="hello_world">Hello fellow</string>
+</resources>
