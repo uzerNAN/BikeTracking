@@ -1,36 +1,201 @@
 package uppsala.biketracking;
 
-import android.graphics.*;
+import android.app.*;
+import android.content.*;
 import android.location.*;
 import android.os.*;
 import android.support.v4.app.*;
-import android.view.animation.*;
+import android.util.*;
 import android.widget.*;
+import com.google.android.gms.common.api.*;
+import com.google.android.gms.drive.*;
+import com.google.android.gms.location.*;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
+import com.google.android.gms.common.*;
 
-import android.graphics.Interpolator;
+//import android.R;
 
 
-public class Tracking extends FragmentActivity {
+public class Tracking extends FragmentActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener
+{
+	PendingIntent activityRecognitionPendingIntent;
+	ActivityRecognitionApi recApi;
+
+	protected synchronized void buildGoogleApiClient() {
+		mClient = new GoogleApiClient.Builder(this)
+			.addApi(LocationServices.API)
+			.addApi(ActivityRecognition.API)
+			.addConnectionCallbacks(this)
+			.addOnConnectionFailedListener(this)
+			.build();
+	}
+	@Override
+	public void onConnected(Bundle p1)
+	{
+		// TODO: Implement this method
+		
+		Intent i = new Intent(this, ActivityRecognitionIS.class);
+		i.setAction("uppsala.biketrack.ActivityRecognitionIS");
+		activityRecognitionPendingIntent = PendingIntent.getService(this, 7422, i, PendingIntent.FLAG_UPDATE_CURRENT);
+		requestUpdates();
+	}
+	
+	private void requestUpdates(){
+		if(mClient.isConnected()){
+			recApi = ActivityRecognition.ActivityRecognitionApi;
+			recApi.requestActivityUpdates(mClient, 10000, activityRecognitionPendingIntent)
+            .setResultCallback(new ResultCallback<Status>() {
+                @Override
+                public void onResult(Status status) {
+                    if (status.isSuccess()) {
+                        Log.i("UPDATE REQUEST", "Successfully registered updates");
+                    } else {
+                        Log.i("UPDATE REQUEST", "Failed to register updates");
+                    }
+                }
+            });
+		}
+	}
+
+	private void removeUpdates(){
+		if(mClient.isConnected()){
+			recApi = ActivityRecognition.ActivityRecognitionApi;
+			recApi.removeActivityUpdates(mClient, activityRecognitionPendingIntent)
+            .setResultCallback(new ResultCallback<Status>() {
+                @Override
+                public void onResult(Status status) {
+                    if (status.isSuccess()) {
+                        Log.i("UPDATE REMOVE", "Successfully removed updates");
+                    } else {
+                        Log.i("UPDATE REMOVE", "Failed to remove updates");
+                    }
+                }
+            });
+		}
+	}
+	
+	@Override
+	public void onConnectionSuspended(int p1)
+	{
+		// TODO: Implement this method
+	}
+
+	@Override
+	public void onConnectionFailed(ConnectionResult p1)
+	{
+		String code = "";
+		switch(p1.getErrorCode()){
+			case(ConnectionResult.API_UNAVAILABLE):
+				code="API UNAVAILABLE";
+				break;
+			case(ConnectionResult.CANCELED):
+				code="CANCELED";
+				break;
+			case(ConnectionResult.DEVELOPER_ERROR):
+				code="DEVELOPER ERROR";
+				break;
+			case(ConnectionResult.DRIVE_EXTERNAL_STORAGE_REQUIRED):
+				code="DRIVE EXTERNAL STORAGE REQUIRED";
+				break;
+			case(ConnectionResult.INTERNAL_ERROR):
+				code="INTERNAL ERROR";
+				break;
+			case(ConnectionResult.INTERRUPTED):
+				code="INTERRUPTED";
+				break;
+			case(ConnectionResult.INVALID_ACCOUNT):
+				code="INVALID ACCOUNT";
+				break;
+			case(ConnectionResult.LICENSE_CHECK_FAILED):
+				code="LICENSE CHECK FAILED";
+				break;
+			case(ConnectionResult.NETWORK_ERROR):
+				code="NETWORK ERROR";
+				break;
+			case(ConnectionResult.RESOLUTION_REQUIRED):
+				code="RESOLUTION REQUIRED";
+				break;
+			case(ConnectionResult.SERVICE_DISABLED):
+				code="SERVICE DISABLED";
+				break;
+			case(ConnectionResult.SERVICE_INVALID):
+				code="SERVICE INVALID";
+				break;
+			case(ConnectionResult.SERVICE_MISSING):
+				code="SERVICE MISSING";
+				break;
+			case(ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED):
+				code="SERVICE VERSION UPDATE REQUIRED";
+				break;
+			case(ConnectionResult.SIGN_IN_REQUIRED):
+				code="SIGN IN REQUIRED";
+				break;
+			case(ConnectionResult.SUCCESS):
+				code="SUCCESS?";
+				break;
+			case(ConnectionResult.TIMEOUT):
+				code="TIMEOUT";
+				break;
+		}
+		
+		Toast.makeText(this, "Connection failed: "+code, Toast.LENGTH_LONG).show();
+		// TODO: Implement this method
+	}
+
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
 	private Marker now;
 	private float zoom;
+	//private Intent intent;
+	private GoogleApiClient mClient;
+	//private ActivityRecognitionIS activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+		//intent = new Intent(this.getApplicationContext(), WakefulReceiver.class);
+		buildGoogleApiClient();
+		//activity = new ActivityRecognitionIS();
+		//startService(intent);
+		//activity.
+		//intent.putExtra("name", "FIRST PACKET");
+		//intent.putExtra("confidence", 100);
+		//intent.putExtra("type", 0);
+		
+		
 		zoom = 20;
         setContentView(R.layout.activity_tracking);
         setUpMapIfNeeded();
+		//sendBroadcast(intent);//new Intent(this, WakefulReceiver.class));
+		
     }
+
+	@Override
+	protected void onStart()
+	{
+		// TODO: Implement this method
+		super.onStart();
+		mClient.connect();
+		//while(!mClient.isConnected()){}
+		
+	}
 
     @Override
     protected void onResume() {
         super.onResume();
+		//registerReceiver(receiver, new IntentFilter("uppsala.biketracking"));
+		requestUpdates();
         setUpMapIfNeeded();
     }
+	
+	@Override
+	protected void onPause(){
+		removeUpdates();
+		super.onPause();
+		//unregisterReceiver(receiver);
+	}
+	
 
     /**
      * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
@@ -102,7 +267,12 @@ public class Tracking extends FragmentActivity {
 
 				// Creating a LatLng object for the current location
 				LatLng latLng = new LatLng(arg0.getLatitude(), arg0.getLongitude());
-				now = mMap.addMarker(new MarkerOptions().position(latLng));
+				MarkerOptions marker = new MarkerOptions().position(latLng);
+				
+				//marker.icon(BitmapDescriptorFactory.fromResource(R. .house_flag))
+				//	.anchor(0.0f, 1.0f);
+				
+				now = mMap.addMarker(marker);
 				
 				// Showing the current location in Google Map
 				mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
@@ -110,7 +280,8 @@ public class Tracking extends FragmentActivity {
 				// Zoom in the Google Map
 				mMap.animateCamera(CameraUpdateFactory.zoomTo(zoom));
 				
-				Toast.makeText(getApplicationContext(),"LATITUDE "+arg0.getLatitude()+" :: LONGTITUDE "+arg0.getLongitude()+" :: ZOOM "+zoom, Toast.LENGTH_SHORT).show();
+				
+				//Toast.makeText(getApplicationContext(),"LATITUDE "+arg0.getLatitude()+" :: LONGTITUDE "+arg0.getLongitude()+" \r\nZOOM "+zoom, Toast.LENGTH_SHORT).show();
 			}
 			
 		});
