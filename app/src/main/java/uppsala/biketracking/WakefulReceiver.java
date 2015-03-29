@@ -20,7 +20,7 @@ public class WakefulReceiver extends WakefulBroadcastReceiver
 			confidence = bundle.getInt("confidence");
 			type = bundle.getInt("type");
 			//if (resultCode == RESULT_OK) {
-			//Log.i("WakefulReceiver",
+			Log.i("WakefulReceiver",type + " : '" + name + "' | " + confidence+"%");
 			Toast.makeText(context,
 						  type + " : '" + name + "' | " + confidence+"%", Toast.LENGTH_LONG).show();
 			//} else {
@@ -33,10 +33,10 @@ public class WakefulReceiver extends WakefulBroadcastReceiver
 			Toast.makeText(context,
 						   "NO ACTIVITY RESULT", Toast.LENGTH_LONG).show();
 		}
-		intent = new Intent(context, ActivityRecognitionIS.class);
-		intent.putExtra("name", name);
-		intent.putExtra("confidence", confidence);
-		intent.putExtra("type", type);
+		//intent = new Intent(context, ActivityRecognitionIS.class);
+		//intent.putExtra("name", name);
+		//intent.putExtra("confidence", confidence);
+		//intent.putExtra("type", type);
 		//startWakefulService(context, intent);
 	}
 	

@@ -2,17 +2,18 @@ package uppsala.biketracking;
 
 import android.app.*;
 import android.content.*;
+import android.graphics.*;
 import android.location.*;
 import android.os.*;
 import android.support.v4.app.*;
 import android.util.*;
+import android.view.*;
 import android.widget.*;
+import com.google.android.gms.common.*;
 import com.google.android.gms.common.api.*;
-import com.google.android.gms.drive.*;
 import com.google.android.gms.location.*;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
-import com.google.android.gms.common.*;
 
 //import android.R;
 
@@ -147,15 +148,35 @@ public class Tracking extends FragmentActivity implements GoogleApiClient.Connec
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
 	private Marker now;
 	private float zoom;
+	private boolean mIsbound = false;
 	//private Intent intent;
 	private GoogleApiClient mClient;
-	//private ActivityRecognitionIS activity;
+	//private TextView latitude, longtitude;
+	private LinearLayout coordinates;
 
+	
+	
+	
+	
+
+	
+	
+	
+	//@Override
+	//protected void onDestroy
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 		//intent = new Intent(this.getApplicationContext(), WakefulReceiver.class);
 		buildGoogleApiClient();
+		
+		//updating our titlebar
+		final boolean customTitleSupported = requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+		
+		//latitude = (TextView) findViewById(R.id.latitude);
+		//longtitude = (TextView) findViewById(R.id.longtitude);
+		
 		//activity = new ActivityRecognitionIS();
 		//startService(intent);
 		//activity.
@@ -163,9 +184,20 @@ public class Tracking extends FragmentActivity implements GoogleApiClient.Connec
 		//intent.putExtra("confidence", 100);
 		//intent.putExtra("type", 0);
 		
+		//super.onCreate(savedInstanceState);
 		
 		zoom = 20;
         setContentView(R.layout.activity_tracking);
+		
+		if(customTitleSupported) {
+			getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.titlebar);
+		}
+		
+		coordinates = (LinearLayout) findViewById(R.id.coordinates);
+		//((TextView)coordinates.getChildAt(0)).setTextColor(Color.WHITE);
+		//((TextView)coordinates.getChildAt(0)).setBackgroundColor(Color.BLACK);
+		//((TextView)coordinates.getChildAt(1)).setTextColor(Color.WHITE);
+		//((TextView)coordinates.getChildAt(1)).setBackgroundColor(Color.BLACK);
         setUpMapIfNeeded();
 		//sendBroadcast(intent);//new Intent(this, WakefulReceiver.class));
 		
@@ -186,11 +218,13 @@ public class Tracking extends FragmentActivity implements GoogleApiClient.Connec
         super.onResume();
 		//registerReceiver(receiver, new IntentFilter("uppsala.biketracking"));
 		requestUpdates();
+		//doBindService();
         setUpMapIfNeeded();
     }
 	
 	@Override
 	protected void onPause(){
+		//doUnbindService();
 		removeUpdates();
 		super.onPause();
 		//unregisterReceiver(receiver);
@@ -279,8 +313,10 @@ public class Tracking extends FragmentActivity implements GoogleApiClient.Connec
 
 				// Zoom in the Google Map
 				mMap.animateCamera(CameraUpdateFactory.zoomTo(zoom));
-				
-				
+				if(coordinates != null) {
+					((TextView) coordinates.getChildAt(0)).setText("LATITUDE "+arg0.getLatitude());
+					((TextView) coordinates.getChildAt(1)).setText("LONGTITUDE "+arg0.getLongitude());
+				}
 				//Toast.makeText(getApplicationContext(),"LATITUDE "+arg0.getLatitude()+" :: LONGTITUDE "+arg0.getLongitude()+" \r\nZOOM "+zoom, Toast.LENGTH_SHORT).show();
 			}
 			

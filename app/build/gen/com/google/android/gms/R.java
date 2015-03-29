@@ -1857,25 +1857,26 @@ containing a value of this type.
         public static final int abc_config_showMenuShortcutsWhenKeyboardPresent=0x7f070005;
     }
     public static final class color {
-        public static final int abc_background_cache_hint_selector_material_dark=0x7f080048;
-        public static final int abc_background_cache_hint_selector_material_light=0x7f080049;
+        public static final int abc_background_cache_hint_selector_material_dark=0x7f08004a;
+        public static final int abc_background_cache_hint_selector_material_light=0x7f08004b;
         public static final int abc_input_method_navigation_guard=0x7f080000;
-        public static final int abc_primary_text_disable_only_material_dark=0x7f08004a;
-        public static final int abc_primary_text_disable_only_material_light=0x7f08004b;
-        public static final int abc_primary_text_material_dark=0x7f08004c;
-        public static final int abc_primary_text_material_light=0x7f08004d;
-        public static final int abc_search_url_text=0x7f08004e;
+        public static final int abc_primary_text_disable_only_material_dark=0x7f08004c;
+        public static final int abc_primary_text_disable_only_material_light=0x7f08004d;
+        public static final int abc_primary_text_material_dark=0x7f08004e;
+        public static final int abc_primary_text_material_light=0x7f08004f;
+        public static final int abc_search_url_text=0x7f080050;
         public static final int abc_search_url_text_normal=0x7f080001;
         public static final int abc_search_url_text_pressed=0x7f080002;
         public static final int abc_search_url_text_selected=0x7f080003;
-        public static final int abc_secondary_text_material_dark=0x7f08004f;
-        public static final int abc_secondary_text_material_light=0x7f080050;
+        public static final int abc_secondary_text_material_dark=0x7f080051;
+        public static final int abc_secondary_text_material_light=0x7f080052;
         public static final int accent_material_dark=0x7f080004;
         public static final int accent_material_light=0x7f080005;
         public static final int background_floating_material_dark=0x7f080006;
         public static final int background_floating_material_light=0x7f080007;
         public static final int background_material_dark=0x7f080008;
         public static final int background_material_light=0x7f080009;
+        public static final int black=0x7f080048;
         public static final int bright_foreground_disabled_material_dark=0x7f08000a;
         public static final int bright_foreground_disabled_material_light=0x7f08000b;
         public static final int bright_foreground_inverse_material_dark=0x7f08000c;
@@ -1897,8 +1898,8 @@ containing a value of this type.
         public static final int common_signin_btn_light_text_disabled=0x7f080037;
         public static final int common_signin_btn_light_text_focused=0x7f080038;
         public static final int common_signin_btn_light_text_pressed=0x7f080036;
-        public static final int common_signin_btn_text_dark=0x7f080051;
-        public static final int common_signin_btn_text_light=0x7f080052;
+        public static final int common_signin_btn_text_dark=0x7f080053;
+        public static final int common_signin_btn_text_light=0x7f080054;
         public static final int dim_foreground_disabled_material_dark=0x7f080012;
         public static final int dim_foreground_disabled_material_light=0x7f080013;
         public static final int dim_foreground_material_dark=0x7f080014;
@@ -1948,8 +1949,9 @@ containing a value of this type.
         public static final int wallet_hint_foreground_holo_light=0x7f080042;
         public static final int wallet_holo_blue_light=0x7f080046;
         public static final int wallet_link_text_light=0x7f080047;
-        public static final int wallet_primary_text_holo_light=0x7f080053;
-        public static final int wallet_secondary_text_holo_dark=0x7f080054;
+        public static final int wallet_primary_text_holo_light=0x7f080055;
+        public static final int wallet_secondary_text_holo_dark=0x7f080056;
+        public static final int white=0x7f080049;
     }
     public static final class dimen {
         public static final int abc_action_bar_default_height_material=0x7f090000;
@@ -2109,6 +2111,7 @@ containing a value of this type.
         public static final int checkbox=0x7f0a003f;
         public static final int classic=0x7f0a0031;
         public static final int collapseActionView=0x7f0a0017;
+        public static final int coordinates=0x7f0a0056;
         public static final int decor_content_parent=0x7f0a0045;
         public static final int default_activity_button=0x7f0a003a;
         public static final int dialog=0x7f0a001b;
@@ -2128,8 +2131,10 @@ containing a value of this type.
         public static final int icon=0x7f0a003c;
         public static final int ifRoom=0x7f0a0018;
         public static final int image=0x7f0a0039;
+        public static final int latitude=0x7f0a0057;
         public static final int listMode=0x7f0a0009;
         public static final int list_item=0x7f0a003b;
+        public static final int longtitude=0x7f0a0058;
         public static final int map=0x7f0a0055;
         public static final int match_parent=0x7f0a002c;
         public static final int middle=0x7f0a0015;
@@ -2201,6 +2206,7 @@ containing a value of this type.
         public static final int activity_tracking=0x7f040017;
         public static final int main=0x7f040018;
         public static final int support_simple_spinner_dropdown_item=0x7f040019;
+        public static final int titlebar=0x7f04001a;
     }
     public static final class mipmap {
         public static final int ic_launcher=0x7f030000;
@@ -2373,6 +2379,7 @@ containing a value of this type.
         public static final int create_calendar_title=0x7f0c002f;
         public static final int decline=0x7f0c002e;
         public static final int hello_world=0x7f0c0035;
+        public static final int local_service_started=0x7f0c0036;
         public static final int store_picture_message=0x7f0c002c;
         public static final int store_picture_title=0x7f0c002b;
         public static final int title_activity_tracking=0x7f0c0034;

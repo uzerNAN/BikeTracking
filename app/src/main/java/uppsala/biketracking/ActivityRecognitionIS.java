@@ -5,16 +5,48 @@ import android.content.*;
 import android.util.*;
 import android.widget.*;
 import com.google.android.gms.location.*;
+import android.os.*;
+import android.support.v4.app.*;
 //import uppsala.biketracking.Tracking;
 
 /**
  * Service that receives ActivityRecognition updates. It receives updates
  * in the background, even if the main Activity is not visible.
  */
-public class ActivityRecognitionIS extends IntentService { 
+public class ActivityRecognitionIS extends IntentService
+{
+	//private NotificationManager mNM;
+	//private int NOTIFICATION = R.string.local_service_started;
+	//public class LocalBinder extends Binder {
+	//	ActivityRecognitionIS getService() {
+	//		return ActivityRecognitionIS.this;
+	//	}
+	//}
+	
+	//@Override
+	//public int onStartCommand(Intent intent, int flags, int startId) {
+		
+	//	return START_STICKY;
+	//}
+
+	//@Override
+	//public void onDestroy()
+	//{
+		// TODO: Implement this method
+		//super.onDestroy();
+		
+	//}
+
+	//@Override
+	//public IBinder onBind(Intent p1)
+	//{
+		// TODO: Implement this method
+	//	return null;
+	//}
+
 
 	protected static final String TAG = "activity-detection-intent-service";
-	private int activityType = -1, sleepTime = 1000, confidence = 0;
+	private int activityType = -1, confidence = 0;
 	private String activityName = "";
 	//..
 	//@Override
@@ -24,6 +56,8 @@ public class ActivityRecognitionIS extends IntentService {
 	
 	@Override
 	public void onCreate(){
+		//mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+		//showNotification();
 		super.onCreate();
 	}
 	
@@ -39,9 +73,9 @@ public class ActivityRecognitionIS extends IntentService {
 		return this.confidence;
 	}
 	
-	public int getSleepTime(){
-		return this.sleepTime;
-	}
+	//public int getSleepTime(){
+	//	return this.sleepTime;
+	//}
 	
 	/**
 	 * Called when a new activity detection update is available.
@@ -52,7 +86,10 @@ public class ActivityRecognitionIS extends IntentService {
 		Log.i(TAG, "Entering onHandleIntent");
 		//...
 		// If the intent contains an update
-		if (ActivityRecognitionResult.hasResult(intent)) {
+		if (ActivityRecognitionResult.hasResult(intent)
+		   //&& !(ActivityRecognitionResult.extractResult(intent).getMostProbableActivity().getType() == this.activityType  && 
+		   // ActivityRecognitionResult.extractResult(intent).getMostProbableActivity().getConfidence() == this.confidence )
+			) {
 			//this.sleepTime = intent.getIntExtra("time", 0);
 			// Get the update
 			ActivityRecognitionResult result = 
@@ -131,7 +168,7 @@ public class ActivityRecognitionIS extends IntentService {
 		else {
 			Log.i(TAG, "Else");
 			//WakefulReceiver.completeWakefulIntent(intent);
-			//this.publishResults(this.activityName, this.confidence, this.activityType);
+			this.publishResults(this.activityName, this.confidence, this.activityType);
 			
 		}
 		//WakefulReceiver.completeWakefulIntent(intent);
