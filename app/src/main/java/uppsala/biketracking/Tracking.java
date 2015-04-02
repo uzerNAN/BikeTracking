@@ -2,12 +2,14 @@ package uppsala.biketracking;
 
 import android.app.*;
 import android.content.*;
+import android.content.res.*;
 import android.graphics.*;
 import android.location.*;
 import android.os.*;
 import android.support.v4.app.*;
 import android.util.*;
 import android.view.*;
+import android.view.animation.*;
 import android.widget.*;
 import com.google.android.gms.common.*;
 import com.google.android.gms.common.api.*;
@@ -15,17 +17,22 @@ import com.google.android.gms.location.*;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 
+import android.view.animation.Interpolator;
+
 //import android.R;
 
 
-public class Tracking extends FragmentActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener
+public class Tracking extends FragmentActivity
 {
-	PendingIntent activityRecognitionPendingIntent;
-	ActivityRecognitionApi recApi;
+	//private PendingIntent penInt;
+	//private ActivityRecognitionApi recApi;
+	//private FusedLocationProviderApi locPro;
+	//private LocationRequest locReq;
+	public static Tracking mainActivity = null;
 
-	protected synchronized void buildGoogleApiClient() {
+	/*protected synchronized void buildGoogleApiClient() {
 		mClient = new GoogleApiClient.Builder(this)
-			.addApi(LocationServices.API)
+			//.addApi(LocationServices.API)
 			.addApi(ActivityRecognition.API)
 			.addConnectionCallbacks(this)
 			.addOnConnectionFailedListener(this)
@@ -36,21 +43,44 @@ public class Tracking extends FragmentActivity implements GoogleApiClient.Connec
 	{
 		// TODO: Implement this method
 		
-		Intent i = new Intent(this, ActivityRecognitionIS.class);
-		i.setAction("uppsala.biketrack.ActivityRecognitionIS");
-		activityRecognitionPendingIntent = PendingIntent.getService(this, 7422, i, PendingIntent.FLAG_UPDATE_CURRENT);
-		requestUpdates();
-	}
+		
+		//penInt = PendingIntent.getBroadcast(this, 7422, i, PendingIntent.FLAG_UPDATE_CURRENT);
+		//locReq = LocationRequest.create();
+		//locReq.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+		//locReq.setFastestInterval(5000);
+		//locReq.setInterval(10000);
+		//requestUpdates();
+	}*/
 	
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		
+		//setContentView(R.layout.activity_tracking);
+	}
+	/*
 	private void requestUpdates(){
 		if(mClient.isConnected()){
 			recApi = ActivityRecognition.ActivityRecognitionApi;
-			recApi.requestActivityUpdates(mClient, 10000, activityRecognitionPendingIntent)
+			//locPro = LocationServices.FusedLocationApi;
+			
+			recApi.requestActivityUpdates(mClient, 15000, penInt)
+				.setResultCallback(new ResultCallback<Status>() {
+					@Override
+					public void onResult(Status status) {
+						if (status.isSuccess()) {
+							Log.i("UPDATE REQUEST", "Successfully registered activity");
+						} else {
+							Log.i("UPDATE REQUEST", "Failed to register activity");
+						}
+					}
+				});
+			locPro.requestLocationUpdates(mClient, locReq, activityRecognitionPendingIntent)
             .setResultCallback(new ResultCallback<Status>() {
                 @Override
                 public void onResult(Status status) {
                     if (status.isSuccess()) {
-                        Log.i("UPDATE REQUEST", "Successfully registered updates");
+                        Log.i("UPDATE REQUEST", "Successfully registered location");
                     } else {
                         Log.i("UPDATE REQUEST", "Failed to register updates");
                     }
@@ -62,17 +92,29 @@ public class Tracking extends FragmentActivity implements GoogleApiClient.Connec
 	private void removeUpdates(){
 		if(mClient.isConnected()){
 			recApi = ActivityRecognition.ActivityRecognitionApi;
-			recApi.removeActivityUpdates(mClient, activityRecognitionPendingIntent)
+			//locPro = LocationServices.FusedLocationApi;
+			recApi.removeActivityUpdates(mClient, penInt)
             .setResultCallback(new ResultCallback<Status>() {
                 @Override
                 public void onResult(Status status) {
                     if (status.isSuccess()) {
-                        Log.i("UPDATE REMOVE", "Successfully removed updates");
+                        Log.i("UPDATE REMOVE", "Successfully removed activity updates");
                     } else {
-                        Log.i("UPDATE REMOVE", "Failed to remove updates");
+                        Log.i("UPDATE REMOVE", "Failed to remove activity updates");
                     }
                 }
             });
+			locPro.removeLocationUpdates(mClient, activityRecognitionPendingIntent)
+				.setResultCallback(new ResultCallback<Status>() {
+					@Override
+					public void onResult(Status status) {
+						if (status.isSuccess()) {
+							Log.i("UPDATE REMOVE", "Successfully removed location updates");
+						} else {
+							Log.i("UPDATE REMOVE", "Failed to remove location updates");
+						}
+					}
+				});
 		}
 	}
 	
@@ -143,18 +185,19 @@ public class Tracking extends FragmentActivity implements GoogleApiClient.Connec
 		Toast.makeText(this, "Connection failed: "+code, Toast.LENGTH_LONG).show();
 		// TODO: Implement this method
 	}
-
+*/
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
 	private Marker now;
 	private float zoom;
-	private boolean mIsbound = false;
+	//private boolean mIsbound = false;
 	//private Intent intent;
 	private GoogleApiClient mClient;
 	//private TextView latitude, longtitude;
 	private LinearLayout coordinates;
-
-	
+	private String aName = "NO ACTIVITY";
+	private int aType = -1, aConfidence = 100;
+	private Bitmap icon;
 	
 	
 	
@@ -169,7 +212,9 @@ public class Tracking extends FragmentActivity implements GoogleApiClient.Connec
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 		//intent = new Intent(this.getApplicationContext(), WakefulReceiver.class);
-		buildGoogleApiClient();
+		Intent i = new Intent(this, WakefulService.class);
+		i.setAction("SERVICE_START");
+		startService(i);
 		
 		//updating our titlebar
 		final boolean customTitleSupported = requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
@@ -192,8 +237,16 @@ public class Tracking extends FragmentActivity implements GoogleApiClient.Connec
 		if(customTitleSupported) {
 			getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.titlebar);
 		}
-		
+		//icon =  findViewById(R.drawable.icon_transparent);
+		//BitmapDescriptor icon_desc = icon.getDrawingCache();
 		coordinates = (LinearLayout) findViewById(R.id.coordinates);
+		icon = Bitmap.createBitmap(1,1, Bitmap.Config.ARGB_8888);
+		//a = Color.alpha(R.color.transparent);
+		//r = Color.red(R.color.transparent);
+		//g = Color.green(R.color.transparent);
+		//b = Color.blue(R.color.transparent);
+
+		icon.setPixel(0, 0, Color.argb(Color.alpha(R.color.transparent), Color.red(R.color.transparent), Color.green(R.color.transparent), Color.blue(R.color.transparent)));
 		//((TextView)coordinates.getChildAt(0)).setTextColor(Color.WHITE);
 		//((TextView)coordinates.getChildAt(0)).setBackgroundColor(Color.BLACK);
 		//((TextView)coordinates.getChildAt(1)).setTextColor(Color.WHITE);
@@ -202,6 +255,17 @@ public class Tracking extends FragmentActivity implements GoogleApiClient.Connec
 		//sendBroadcast(intent);//new Intent(this, WakefulReceiver.class));
 		
     }
+/*
+	@Override
+	protected void onDestroy()
+	{
+		// TODO: Implement this method
+		//mClient.disconnect();
+		//penInt.cancel();
+		super.onDestroy();
+	}
+	
+	
 
 	@Override
 	protected void onStart()
@@ -211,13 +275,14 @@ public class Tracking extends FragmentActivity implements GoogleApiClient.Connec
 		mClient.connect();
 		//while(!mClient.isConnected()){}
 		
-	}
+	}*/
 
     @Override
     protected void onResume() {
         super.onResume();
 		//registerReceiver(receiver, new IntentFilter("uppsala.biketracking"));
-		requestUpdates();
+		//requestUpdates();
+		mainActivity = this;
 		//doBindService();
         setUpMapIfNeeded();
     }
@@ -225,12 +290,21 @@ public class Tracking extends FragmentActivity implements GoogleApiClient.Connec
 	@Override
 	protected void onPause(){
 		//doUnbindService();
-		removeUpdates();
+		//removeUpdates();
 		super.onPause();
+		mainActivity = null;
 		//unregisterReceiver(receiver);
 	}
 	
-
+	public void update(int aType, String aName, int c){
+		if(!(aType == this.aType && c == this.aConfidence)){
+			this.aType = aType; this.aName = aName; this.aConfidence = c;
+			//changePosition(now.getPosition().latitude, now.getPosition().longitude);
+			updateTitle();
+			//Toast.makeText(this.getApplicationContext(), aType+" : "+aName+" | "+c+"%", Toast.LENGTH_LONG).show();
+		}
+	}
+	
     /**
      * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
      * installed) and the map has not already been instantiated.. This will ensure that we only ever
@@ -289,38 +363,100 @@ public class Tracking extends FragmentActivity implements GoogleApiClient.Connec
 			@Override
 			public void onMyLocationChange(Location arg0){
 				//mMap.get.addMarker( new MarkerOptions().position( new LatLng(arg0.getLatitude(), arg0.getLongitude())).title("YOU ARE HERE"));
-				if(now != null){
-					now.remove();
-				}
-
-				// Getting latitude of the current location
-				//double latitude = location.getLatitude();
-
-				// Getting longitude of the current location
-				//double longitude = location.getLongitude();
-
-				// Creating a LatLng object for the current location
-				LatLng latLng = new LatLng(arg0.getLatitude(), arg0.getLongitude());
-				MarkerOptions marker = new MarkerOptions().position(latLng);
-				
-				//marker.icon(BitmapDescriptorFactory.fromResource(R. .house_flag))
-				//	.anchor(0.0f, 1.0f);
-				
-				now = mMap.addMarker(marker);
-				
-				// Showing the current location in Google Map
-				mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-
-				// Zoom in the Google Map
-				mMap.animateCamera(CameraUpdateFactory.zoomTo(zoom));
-				if(coordinates != null) {
-					((TextView) coordinates.getChildAt(0)).setText("LATITUDE "+arg0.getLatitude());
-					((TextView) coordinates.getChildAt(1)).setText("LONGTITUDE "+arg0.getLongitude());
-				}
+				changePosition(arg0.getLatitude(), arg0.getLongitude());
 				//Toast.makeText(getApplicationContext(),"LATITUDE "+arg0.getLatitude()+" :: LONGTITUDE "+arg0.getLongitude()+" \r\nZOOM "+zoom, Toast.LENGTH_SHORT).show();
 			}
 			
 		});
+	}
+	private void updateTitle(){
+		if(now!=null){
+			now.setTitle(this.aName+" ["+aConfidence+"%]");
+			now.showInfoWindow();
+		}
+	}
+	
+	/*public void animateMarker(final Marker marker, final LatLng toPosition,
+							  final boolean hideMarker) {
+		final Handler handler = new Handler();
+		final long start = SystemClock.uptimeMillis();
+		Projection proj = mMap.getProjection();
+		Point startPoint = proj.toScreenLocation(marker.getPosition());
+		final LatLng startLatLng = proj.fromScreenLocation(startPoint);
+		final long duration = 500;
+		final Interpolator interpolator = new LinearInterpolator();
+		handler.post(new Runnable() {
+				@Override
+				public void run() {
+					long elapsed = SystemClock.uptimeMillis() - start;
+					float t = interpolator.getInterpolation((float) elapsed
+															/ duration);
+					double lng = t * toPosition.longitude + (1 - t)
+						* startLatLng.longitude;
+					double lat = t * toPosition.latitude + (1 - t)
+						* startLatLng.latitude;
+					marker.setPosition(new LatLng(lat, lng));
+					if (t < 1.0) {
+						// Post again 16ms later.
+						handler.postDelayed(this, 16);
+					} else {
+						if (hideMarker) {
+							marker.setVisible(false);
+						} else {
+							marker.setVisible(true);
+						}
+					}
+				}
+			});
+	}*/
+	
+	public void changePosition(double latitude, double longitude){
+		if(now != null){
+			//now.setDraggable(true);
+			//animateMarker(now, new LatLng(latitude, longitude), true);
+			/*while(latitude != lat && longitude != lon){
+				if(latitude > lat){
+					
+				}
+				else if(latitude < lat){
+					lat 
+				}
+				if(longitude > lon){
+					
+				}
+				else if(longitude < lon){
+					
+				}
+				now.setPosition(new LatLng( latitude, longitude));
+			}*/
+			now.remove();
+		}
+		// Getting latitude of the current location
+		//double latitude = location.getLatitude();
+
+		// Getting longitude of the current location
+		//double longitude = location.getLongitude();
+
+		// Creating a LatLng object for the current location latitude
+
+		LatLng latLng = new LatLng(latitude, longitude);
+		//MarkerOptions marker = ;
+		//marker.se
+		//marker.icon(BitmapDescriptorFactory.fromResource(R. .house_flag))
+		//	.anchor(0.0f, 1.0f);
+
+		now = mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromBitmap(icon)));
+		updateTitle();
+		//now.showInfoWindow();
+		// Showing the current location in Google Map
+		mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+
+		// Zoom in the Google Map
+		mMap.animateCamera(CameraUpdateFactory.zoomTo(zoom));
+		if(coordinates != null) {
+			((TextView) coordinates.getChildAt(0)).setText("LATITUDE "+latitude);
+			((TextView) coordinates.getChildAt(1)).setText("LONGTITUDE "+longitude);
+		}
 	}
 	
 	

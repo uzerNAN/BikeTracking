@@ -86,23 +86,27 @@ public class ActivityRecognitionIS extends IntentService
 		Log.i(TAG, "Entering onHandleIntent");
 		//...
 		// If the intent contains an update
-		if (ActivityRecognitionResult.hasResult(intent)
-		   //&& !(ActivityRecognitionResult.extractResult(intent).getMostProbableActivity().getType() == this.activityType  && 
-		   // ActivityRecognitionResult.extractResult(intent).getMostProbableActivity().getConfidence() == this.confidence )
-			) {
+		if(Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())){
+			this.publishResults("BOOT COMPLETED", 0, -1);
+		}
+		else if (ActivityRecognitionResult.hasResult(intent)){
+			DetectedActivity probableActivity = ActivityRecognitionResult.extractResult(intent).getMostProbableActivity();
+		  // if( !(probableActivity.getType() == this.activityType  && 
+		 //   probableActivity.getConfidence() == this.confidence )
+		//	) {
 			//this.sleepTime = intent.getIntExtra("time", 0);
 			// Get the update
-			ActivityRecognitionResult result = 
-				ActivityRecognitionResult.extractResult(intent);
+			//ActivityRecognitionResult result = 
+			//	ActivityRecognitionResult.extractResult(intent);
 
-			DetectedActivity mostProbableActivity 
-				= result.getMostProbableActivity();
+			//DetectedActivity mostProbableActivity 
+			//	= result.getMostProbableActivity();
 
 			// Get the confidence % (probability)
-			this.confidence = mostProbableActivity.getConfidence();
+			this.confidence = probableActivity.getConfidence();
 
 			// Get the type 
-			this.activityType = mostProbableActivity.getType();
+			this.activityType = probableActivity.getType();
 			
 			//this.activityName = "";
 			
@@ -147,21 +151,22 @@ public class ActivityRecognitionIS extends IntentService
 			//WakefulReceiver.completeWakefulIntent(intent);
 				this.publishResults(this.activityName, this.confidence, this.activityType);
 			//}
+			//}
 		}
-		else if(intent.getExtras() != null){
-			Log.i(TAG, "Else if");
-			if(!this.activityName.equals(intent.getExtras().getString("name"))
-			|| this.confidence != intent.getExtras().getInt("confidence")){
+		/*else if(intent.getExtras() != null){
+			//Log.i(TAG, "Else if");
+			//if(!this.activityName.equals(intent.getExtras().getString("name"))
+			//|| this.confidence != intent.getExtras().getInt("confidence")){
 				
-				Log.i(TAG, "passed");
+				//Log.i(TAG, "passed");
 			 	//WakefulReceiver.completeWakefulIntent(intent);
-				this.publishResults(this.activityName, this.confidence, this.activityType);
+				//this.publishResults(this.activityName, this.confidence, this.activityType);
 			 
-			}
-			else {
-				Log.i(TAG, "not passed");
+			//}
+			//else {
+			//	Log.i(TAG, "not passed");
 				//WakefulReceiver.completeWakefulIntent(intent);
-			}
+			//}
 				
 		 	//WakefulReceiver.completeWakefulIntent(intent);
 		}
@@ -170,11 +175,15 @@ public class ActivityRecognitionIS extends IntentService
 			//WakefulReceiver.completeWakefulIntent(intent);
 			this.publishResults(this.activityName, this.confidence, this.activityType);
 			
-		}
+		}*/
 		//WakefulReceiver.completeWakefulIntent(intent);
 		Log.i(TAG, "Leaving onHandleIntent");
 	}
 	private void publishResults(String name, int c, int type) {
+		//if(Tracking.mainActivity != null){
+		//	Tracking.mainActivity.update(" * FROM_SERVICE * "+name, type, c);
+		//}
+		//else{
 		Log.i(TAG,
 		//Toast.makeText(this, 
 		"UPDATE : '"+ name+"' :: "+type+" | "+c+"%");//, Toast.LENGTH_SHORT).show();
@@ -183,5 +192,6 @@ public class ActivityRecognitionIS extends IntentService
 		intent.putExtra("confidence", c);
 		intent.putExtra("type", type);
 		sendBroadcast(intent);
+		//}
 	}
 }

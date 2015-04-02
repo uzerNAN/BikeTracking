@@ -31,33 +31,62 @@
 		android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION"/>
 
 	<uses-permission
+		android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
+	<uses-permission
 		android:name="android.permission.WAKE_LOCK"/>
 
 	<application
 		android:allowBackup="true"
 		android:icon="@mipmap/ic_launcher"
 		android:label="@string/app_name"
-		android:theme="@style/AppTheme">
+		android:theme="@style/AppTheme"
+		android:configChanges="keyboardHidden|orientation|screenSize">
 
 		<receiver
 			android:name="uppsala.biketracking.WakefulReceiver"
 			android:label="@string/app_name"
 			android:enabled="true">
 
+			<intent-filter>
+
+				<action
+					android:name="uppsala.biketracking.WakefulReceiver"/>
+
+				<action
+					android:name="SERVICE_START"/>
+
+				<action
+					android:name="SERVICE_DATA"/>
+
+				<action
+					android:name="FILE_ERROR"/>
+
+				<action
+					android:name="SERVICE_STOP"/>
+
+			</intent-filter>
+
 		</receiver>
 
 		<service
-			android:name="uppsala.biketracking.ActivityRecognitionIS"
+			android:name="uppsala.biketracking.WakefulService"
 			android:exported="false"
 			android:enabled="true">
 
 			<intent-filter>
 
 				<action
-					android:name="uppsala.biketracking.ActivityRecognitionIS"/>
+					android:name="uppsala.biketracking.WakefulService"/>
 
 				<action
-					android:name="ACTIVITY_RECOGNITION_DATA"/>
+					android:name="ACTIVITY_DATA"/>
+
+				<action
+					android:name="SERVICE_START"/>
+
+				<action
+					android:name="SERVICE_STOP"/>
 
 			</intent-filter>
 
