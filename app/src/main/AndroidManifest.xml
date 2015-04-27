@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <!--
@@ -33,7 +34,9 @@
 				<action android:name="uppsala.biketracking.WakefulReceiver" />
 				<action android:name="SERVICE_START" />
 				<action android:name="SERVICE_DATA" />
+				<action android:name="DATA_UPLOADED" />
 				<action android:name="FILE_ERROR" />
+				<action android:name="UPLOAD_ERROR" />
 				<action android:name="SERVICE_STOP" />
 			</intent-filter>
 		</receiver>

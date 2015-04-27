@@ -18,7 +18,7 @@ public class WakefulService extends Service implements com.google.android.gms.lo
 	//{
 		// TODO: Implement this method
 	//}
-
+	public static final String filePath = "sdcard/collected_data.txt";
 	@Override
 	public void onConnectionSuspended(int p1)
 	{
@@ -38,16 +38,27 @@ public class WakefulService extends Service implements com.google.android.gms.lo
 	//private ActivityRecognitionApi recApi;
 	//private FusedLocationProviderApi locPro;
 	private LocationRequest locReq;
-	private int aType = -1, aConfidence = 100, time = 15, count = 0;
+	private int aType = -1, aConfidence = 100, time = 15, count = 0, prvSID = -1;
+	//private double prvLatitude, prvLongitude;
+	private long prvTime = 0;
 	private String aName = "NO ACTIVITY";
 	private Location lLoc;
 	private boolean destroy = false, record = false;
 	private GoogleApiClient mClient;
 	//private int test = 10;
 
+	public void successfullyUploaded(){
+		sendBroadcast(new Intent().setAction("DATA_UPLOADED"));
+		this.addUpdate("UPLOADED");
+	}
+	public void failedToUpload(){
+		sendBroadcast(new Intent().setAction("UPLOAD_ERROR"));
+	}
+	
+	
 	private boolean addUpdate(String text){
 		boolean add = true;
-		File updateLog = new File("sdcard/activity_update.txt");
+		File updateLog = new File(filePath);
 		if(!updateLog.exists()){
 			try{
 				updateLog.createNewFile();
@@ -222,38 +233,20 @@ public class WakefulService extends Service implements com.google.android.gms.lo
 	}
 
 	//private Intent send;
-	
+	private final long sessionTimeout = 600000;//ms = 10 min
 	@Override
 	public void onLocationChanged(Location p1)
 	{
-		
 		lLoc = p1;
-		
-		//Log.i("SERVICE LOCATION", p1.toString());
-		//Log.i("SERVICE ACTIVITY", aType+" :: "+aName+" | "+aConfidence+"%");
-		/*Intent send = new Intent("SERVICE_BROADCAST");
-		send.setAction("SERVICE_DATA");
-		send.putExtra("ACCURANCY", p1.getAccuracy());
-		send.putExtra("LATITUDE", p1.getLatitude());
-		send.putExtra("LONGITUDE", p1.getLongitude());
-		send.putExtra("ALTITUDE", p1.getAltitude());
-		send.putExtra("SPEED", p1.getSpeed());
-		send.putExtra("TIME", p1.getTime());
-		//send.putExtra("ACTIVITY", aType+" :: "+aName+" | "+aConfidence+"%");
-		send.putExtra("ACTIVITY_TYPE", aType);
-		send.putExtra("ACTIVITY_NAME", aName);
-		send.putExtra("ACTIVITY_CONFIDENCE", aConfidence);
-		sendBroadcast(send);*/
 		if(record){
-		if(!addUpdate("ACCURANCY " + p1.getAccuracy()
-		 + " | LATITUDE "+ p1.getLatitude()
-		 + " | LONGITUDE " + p1.getLongitude()
-		 + " | ALTITUDE " + p1.getAltitude()
-		 + " | SPEED " + p1.getSpeed()
-		 + " | TIME " + p1.getTime()
-		 + " | ACTIVITY_TYPE " + aType
-		 + " | ACTIVITY_NAME " + aName 
-		 + " | ACTIVITY_CONFIDENCE " + aConfidence + "%")){
+			//String update = "";
+			if(this.prvTime!=0 && (p1.getTime()-this.prvTime)>this.sessionTimeout){
+				this.prvSID++;
+			}
+			if(!addUpdate("SID "+this.prvSID
+			+"|LATITUDE "+p1.getLatitude()
+			+"|LONGITUDE "+p1.getLongitude()
+			+"|TIME "+p1.getTime())){
 			 sendBroadcast(new Intent("FILE_PERMISSION").setAction("FILE_ERROR"));
 		 }
 		}
@@ -355,63 +348,8 @@ public class WakefulService extends Service implements com.google.android.gms.lo
 			else if(count<=5){
 				count++;
 			}
-			
-			
-			//destroy = false;
-			//onDestroy();
-			//Toast.makeText(ActivityRecognitionIS.this,
-			//Log.i(TAG, this.activityName+" :: "+this.confidence+" %  confidence");
-			// Log.i(TAG, );
-			//name = bundle.getString("name");
-			//confidence = bundle.getInt("confidence");
-			//type = bundle.getInt("type");
-			//if (resultCode == RESULT_OK) {
-			//Log.i("WakefulReceiver",type + " : '" + name + "' | " + confidence+"%");
-			//Toast.makeText(context,
-			//if(Tracking.mainActivity != null){
-			//	Tracking.mainActivity.update(aName, aType, aConfidence);
-
-				//Tracking.mainActivity.changePosition(loc.getLatitude(), loc.getLongitude());
-			//}
 		}
 		
-		/*if(count < 10){
-			if(!record){
-				record = true;
-				requestLocationUpdates();
-				time = 15;
-				count++;
-			}
-			//count++;
-		}*/
-		/*if(intent.getAction().equals("SERVICE_START")){
-			//Log.i("SERVICE UPDATE", "GOT SERVICE_START");
-			destroy = false;
-			startInt = intent;
-			if(mClient != null){
-				if(!mClient.isConnected()){
-					if(!mClient.isConnecting()){
-						mClient.connect();
-					}
-				}
-			}
-			else {
-				buildGoogleApiClient();
-				mClient.connect();
-				//requestUpdates();
-			}
-		}
-		if(intent.getAction().equals("SERVICE_STOP")){
-			onDestroy();
-		}*/
-		//} else {
-		//	Toast.makeText(MainActivity.this, "Download failed",
-		//				   Toast.LENGTH_LONG).show();
-		//	textView.setText("Download failed");
-		//}
-		//if(destroy){
-		//	onDestroy();
-		//}
 		return super.onStartCommand(intent, flags, startId);
 	
 	}

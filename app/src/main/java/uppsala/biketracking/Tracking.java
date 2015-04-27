@@ -18,6 +18,7 @@ import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 
 import android.view.animation.Interpolator;
+import java.util.*;
 
 //import android.R;
 
@@ -30,189 +31,35 @@ public class Tracking extends FragmentActivity
 	//private LocationRequest locReq;
 	public static Tracking mainActivity = null;
 
-	/*protected synchronized void buildGoogleApiClient() {
-		mClient = new GoogleApiClient.Builder(this)
-			//.addApi(LocationServices.API)
-			.addApi(ActivityRecognition.API)
-			.addConnectionCallbacks(this)
-			.addOnConnectionFailedListener(this)
-			.build();
-	}
-	@Override
-	public void onConnected(Bundle p1)
-	{
-		// TODO: Implement this method
-		
-		
-		//penInt = PendingIntent.getBroadcast(this, 7422, i, PendingIntent.FLAG_UPDATE_CURRENT);
-		//locReq = LocationRequest.create();
-		//locReq.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-		//locReq.setFastestInterval(5000);
-		//locReq.setInterval(10000);
-		//requestUpdates();
-	}*/
 	
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		
-		//setContentView(R.layout.activity_tracking);
-	}
-	/*
-	private void requestUpdates(){
-		if(mClient.isConnected()){
-			recApi = ActivityRecognition.ActivityRecognitionApi;
-			//locPro = LocationServices.FusedLocationApi;
-			
-			recApi.requestActivityUpdates(mClient, 15000, penInt)
-				.setResultCallback(new ResultCallback<Status>() {
-					@Override
-					public void onResult(Status status) {
-						if (status.isSuccess()) {
-							Log.i("UPDATE REQUEST", "Successfully registered activity");
-						} else {
-							Log.i("UPDATE REQUEST", "Failed to register activity");
-						}
-					}
-				});
-			locPro.requestLocationUpdates(mClient, locReq, activityRecognitionPendingIntent)
-            .setResultCallback(new ResultCallback<Status>() {
-                @Override
-                public void onResult(Status status) {
-                    if (status.isSuccess()) {
-                        Log.i("UPDATE REQUEST", "Successfully registered location");
-                    } else {
-                        Log.i("UPDATE REQUEST", "Failed to register updates");
-                    }
-                }
-            });
-		}
-	}
-
-	private void removeUpdates(){
-		if(mClient.isConnected()){
-			recApi = ActivityRecognition.ActivityRecognitionApi;
-			//locPro = LocationServices.FusedLocationApi;
-			recApi.removeActivityUpdates(mClient, penInt)
-            .setResultCallback(new ResultCallback<Status>() {
-                @Override
-                public void onResult(Status status) {
-                    if (status.isSuccess()) {
-                        Log.i("UPDATE REMOVE", "Successfully removed activity updates");
-                    } else {
-                        Log.i("UPDATE REMOVE", "Failed to remove activity updates");
-                    }
-                }
-            });
-			locPro.removeLocationUpdates(mClient, activityRecognitionPendingIntent)
-				.setResultCallback(new ResultCallback<Status>() {
-					@Override
-					public void onResult(Status status) {
-						if (status.isSuccess()) {
-							Log.i("UPDATE REMOVE", "Successfully removed location updates");
-						} else {
-							Log.i("UPDATE REMOVE", "Failed to remove location updates");
-						}
-					}
-				});
-		}
-	}
-	
-	@Override
-	public void onConnectionSuspended(int p1)
-	{
-		// TODO: Implement this method
-	}
-
-	@Override
-	public void onConnectionFailed(ConnectionResult p1)
-	{
-		String code = "";
-		switch(p1.getErrorCode()){
-			case(ConnectionResult.API_UNAVAILABLE):
-				code="API UNAVAILABLE";
-				break;
-			case(ConnectionResult.CANCELED):
-				code="CANCELED";
-				break;
-			case(ConnectionResult.DEVELOPER_ERROR):
-				code="DEVELOPER ERROR";
-				break;
-			case(ConnectionResult.DRIVE_EXTERNAL_STORAGE_REQUIRED):
-				code="DRIVE EXTERNAL STORAGE REQUIRED";
-				break;
-			case(ConnectionResult.INTERNAL_ERROR):
-				code="INTERNAL ERROR";
-				break;
-			case(ConnectionResult.INTERRUPTED):
-				code="INTERRUPTED";
-				break;
-			case(ConnectionResult.INVALID_ACCOUNT):
-				code="INVALID ACCOUNT";
-				break;
-			case(ConnectionResult.LICENSE_CHECK_FAILED):
-				code="LICENSE CHECK FAILED";
-				break;
-			case(ConnectionResult.NETWORK_ERROR):
-				code="NETWORK ERROR";
-				break;
-			case(ConnectionResult.RESOLUTION_REQUIRED):
-				code="RESOLUTION REQUIRED";
-				break;
-			case(ConnectionResult.SERVICE_DISABLED):
-				code="SERVICE DISABLED";
-				break;
-			case(ConnectionResult.SERVICE_INVALID):
-				code="SERVICE INVALID";
-				break;
-			case(ConnectionResult.SERVICE_MISSING):
-				code="SERVICE MISSING";
-				break;
-			case(ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED):
-				code="SERVICE VERSION UPDATE REQUIRED";
-				break;
-			case(ConnectionResult.SIGN_IN_REQUIRED):
-				code="SIGN IN REQUIRED";
-				break;
-			case(ConnectionResult.SUCCESS):
-				code="SUCCESS?";
-				break;
-			case(ConnectionResult.TIMEOUT):
-				code="TIMEOUT";
-				break;
-		}
-		
-		Toast.makeText(this, "Connection failed: "+code, Toast.LENGTH_LONG).show();
-		// TODO: Implement this method
-	}
-*/
-
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
 	private Marker now;
 	private float zoom;
 	//private boolean mIsbound = false;
 	//private Intent intent;
-	private GoogleApiClient mClient;
+	//private GoogleApiClient mClient;
 	//private TextView latitude, longtitude;
 	private LinearLayout coordinates;
 	private String aName = "NO ACTIVITY";
 	private int aType = -1, aConfidence = 100;
 	private Bitmap icon;
-	
-	
-	
-
-	
-	
+	private CollectedData data;
 	
 	//@Override
 	//protected void onDestroy
+	
+	public void resetUpdate(){
+		if(this.data != null){
+			this.data.resetUpdate();
+		}
+	}
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 		//intent = new Intent(this.getApplicationContext(), WakefulReceiver.class);
 		Intent i = new Intent(this, WakefulService.class);
+		data = new CollectedData(this);
 		i.setAction("SERVICE_START");
 		startService(i);
 		
@@ -296,13 +143,22 @@ public class Tracking extends FragmentActivity
 		//unregisterReceiver(receiver);
 	}
 	
+	//CollectedData data == null;
+	
 	public void update(int aType, String aName, int c){
 		if(!(aType == this.aType && c == this.aConfidence)){
 			this.aType = aType; this.aName = aName; this.aConfidence = c;
 			//changePosition(now.getPosition().latitude, now.getPosition().longitude);
 			updateTitle();
+			
 			//Toast.makeText(this.getApplicationContext(), aType+" : "+aName+" | "+c+"%", Toast.LENGTH_LONG).show();
 		}
+		if(!this.data.uploading() && !this.data.updateIsEmpty()){
+			this.data.uploadData();
+		}
+		//else{
+		//	Toast.makeText(this, "Unable to upload: uploading="+this.data.uploading()+", updateIsEmpty="+this.data.updateIsEmpty(), Toast.LENGTH_SHORT).show();
+		//}
 	}
 	
     /**
@@ -410,7 +266,21 @@ public class Tracking extends FragmentActivity
 			});
 	}*/
 	
+	//CollectedData data = null;
+	
 	public void changePosition(double latitude, double longitude){
+		
+		/*:::*/
+		//if(data == null){
+		//	data = new CollectedData();
+		//}
+		//if(data != null){
+		//if(data.getTemp() != ""){
+		//	Toast.makeText(this, data.getTemp(), Toast.LENGTH_LONG).show();
+		//}
+		//}
+		/*:::*/
+		
 		if(now != null){
 			//now.setDraggable(true);
 			//animateMarker(now, new LatLng(latitude, longitude), true);
@@ -444,18 +314,43 @@ public class Tracking extends FragmentActivity
 		//marker.se
 		//marker.icon(BitmapDescriptorFactory.fromResource(R. .house_flag))
 		//	.anchor(0.0f, 1.0f);
+		if(mMap != null){
+			now = mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromBitmap(icon)));
+			updateTitle();
+			//now.showInfoWindow();
+			// Showing the current location in Google Map
+			mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 
-		now = mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromBitmap(icon)));
-		updateTitle();
-		//now.showInfoWindow();
-		// Showing the current location in Google Map
-		mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-
-		// Zoom in the Google Map
-		mMap.animateCamera(CameraUpdateFactory.zoomTo(zoom));
+			// Zoom in the Google Map
+			mMap.animateCamera(CameraUpdateFactory.zoomTo(zoom));
+		}
 		if(coordinates != null) {
 			((TextView) coordinates.getChildAt(0)).setText("LATITUDE "+latitude);
 			((TextView) coordinates.getChildAt(1)).setText("LONGTITUDE "+longitude);
+		}
+		if(lineOp != null){
+			if(lineOp.getPoints().size() >= lineSize){
+				addLine();
+			}
+		}
+		addLinePoint(latLng);
+	}
+	private List<Polyline> points;
+	private PolylineOptions lineOp;
+	private final static int lineSize = 5;
+	private void addLinePoint(LatLng point){
+		if(lineOp == null){
+			lineOp = new PolylineOptions().width(5).color(Color.GREEN);
+		}
+		lineOp.add(point);
+	}
+	private void addLine(){
+		if(lineOp != null){
+			if(points == null){
+				points = new ArrayList<Polyline>();
+			}
+			points.add(mMap.addPolyline(lineOp));
+			lineOp = null;
 		}
 	}
 	
