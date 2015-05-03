@@ -43,26 +43,29 @@ public class Tracking extends FragmentActivity
 	private String aName = "NO ACTIVITY";
 	private int aType = -1, aConfidence = 100;
 	private Bitmap icon;
-	private CollectedData data;
+	private CollectedData data = null;
 	
 	//@Override
 	//protected void onDestroy
 	
-	public void resetUpdate(){
+	/*public void resetUpdate(){
 		if(this.data != null){
-			this.data.resetUpdate();
+			this.data.resetData();
 		}
-	}
+	}*/
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 		//intent = new Intent(this.getApplicationContext(), WakefulReceiver.class);
 		Intent i = new Intent(this, WakefulService.class);
-		data = new CollectedData(this);
-		i.setAction("SERVICE_START");
-		startService(i);
-		
+		//this.data = new CollectedData(this);
+		if(WakefulService.mainService == null){
+			i.setAction("SERVICE_START");
+			//.putExtra("LAST_SID", this.data.getLastSID())
+			//.putExtra("LAST_TIME", this.data.getLastTime());
+			this.startService(i);
+		}
 		//updating our titlebar
 		final boolean customTitleSupported = requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		
@@ -144,21 +147,21 @@ public class Tracking extends FragmentActivity
 	}
 	
 	//CollectedData data == null;
-	
+	public void add(int sid, double latitude, double longitude, long time, float accuracy){
+		if(this.data != null){
+			this.data.add(sid, latitude, longitude, time, accuracy);
+		}
+	}
 	public void update(int aType, String aName, int c){
 		if(!(aType == this.aType && c == this.aConfidence)){
 			this.aType = aType; this.aName = aName; this.aConfidence = c;
-			//changePosition(now.getPosition().latitude, now.getPosition().longitude);
 			updateTitle();
-			
-			//Toast.makeText(this.getApplicationContext(), aType+" : "+aName+" | "+c+"%", Toast.LENGTH_LONG).show();
 		}
-		if(!this.data.uploading() && !this.data.updateIsEmpty()){
+		if(this.data != null){
 			this.data.uploadData();
 		}
-		//else{
-		//	Toast.makeText(this, "Unable to upload: uploading="+this.data.uploading()+", updateIsEmpty="+this.data.updateIsEmpty(), Toast.LENGTH_SHORT).show();
-		//}
+		
+		
 	}
 	
     /**

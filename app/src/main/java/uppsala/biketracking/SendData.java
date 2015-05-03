@@ -9,17 +9,33 @@ import java.net.*;
 
 public class SendData implements Runnable
 {
-	private String input, output = null;
-	public SendData(String i){
+	private String input, output;
+	boolean uploading;
+	public SendData(){
+		this.input = "";
+		this.output = "";
+		this.uploading = false;
+	}
+	public void setInput(String i){
 		this.input = i;
 	}
-	public void resetOutput(){
-		this.output = null;
+	private void setUploading(boolean uploading){
+		this.uploading = uploading;
+		if(!uploading){
+			this.output = "";
+			this.setInput("");
+		}
 	}
-	public String getOutput(){
-		return this.output;
+	public boolean uploading(){
+		return this.uploading;
 	}
+	//private String getOutput(){
+	//	return this.output;
+	//}
 	public void run() {
+		if(!this.input.equals("")){
+			//this.output = "";
+			this.setUploading(true);
 		try{
 			URL url = new URL("http://130.243.235.172:8080/MyServer/MyServlet");
 			URLConnection connection = url.openConnection();
@@ -31,7 +47,7 @@ public class SendData implements Runnable
 			OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
 			out.write(this.input);
 			out.close();
-			this.output = "";
+			
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			while((this.input = in.readLine()) != null){
@@ -40,19 +56,18 @@ public class SendData implements Runnable
 			in.close();
 			if(!this.output.equals("")){
 				Log.i("UPLOAD", "IS SUCCESSFUL");
-				this.output = "SUCCESS";
+				//this.output = "SUCCESS";
 				if(WakefulService.mainService != null){
 					WakefulService.mainService.successfullyUploaded();
 				}
 			}
 			else{
 				Log.i("UPLOAD", "FAILED");
-				this.output = "FAIL";
+				//this.output = "FAIL";
 				if(WakefulService.mainService != null){
 					WakefulService.mainService.failedToUpload();
 				}
 			}
-			//this.resetOutput();
 			
 		}
 		catch(Exception e) {
@@ -60,6 +75,8 @@ public class SendData implements Runnable
 			if(WakefulService.mainService != null){
 				WakefulService.mainService.failedToUpload();
 			}
+		}
+		this.setUploading(false);
 		}
 	}
 }
