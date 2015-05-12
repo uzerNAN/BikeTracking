@@ -1,5 +1,4 @@
-
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<title>Heatmap</title>
@@ -7,76 +6,35 @@
 
 	<link rel="stylesheet" href="css/style.css" type="text/css" media="all">
 	<script type="text/javascript" src="js/jquery-1.5.2.js" ></script>
-
+	<script type="text/javascript" src="js/cufon-yui.js"></script>
+	<script type="text/javascript" src="js/cufon-replace.js"></script>  
+	<script type="text/javascript" src="js/jquery.jqtransform.js" ></script>
 	<script type="text/javascript" src="js/jquery.nivo.slider.pack.js"></script>
+	<script type="text/javascript" src="js/atooltip.jquery.js"></script>
+	<script type="text/javascript" src="js/script.js"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=visualization,places"></script>
 	<script>
-
+// Adding 500 Data Points
 var map, pointarray, heatmap;
-<?php
-	//1. creat a database connection
-		$dbhost = "localhost";
-		$dbuser = "newuser";
-		$dbpass = "7zijian";
-		$dbname = "cn3";
-		$connection = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname);
-		
-	//Test if connection occurred
-	if(mysqli_connect_errno()){
-		die("Database connenction failed:".
-			mysqli_connect_error().
-			"(".mysqli_connect_errno().")"
-			);
-	}
 
-	//2.perform database query
-	$query 	= "select * ";
-	$query .= "from node ";
-	$result = mysqli_query($connection,$query);
-	// test if there was a query error
-	if(!$result)
-		die("Database query failed");
-
-			
-			$data = array();
-			$i = 0;
-			//3. use returned database
-			while($row = mysqli_fetch_array($result)){
-				//output data from each row
-				//var_dump($row);
-				$data[$i] = $row;
-				$i++;
-			}
-
-	$query2 = "SELECT count(longitude) ";
-	$query2.= "FROM node" ;
-	$count = mysqli_query($connection, $query2);
-	if(!$count)
-		die("Count query failed");
-	$count = mysqli_fetch_row($count)
-?>
-var m,n;
-var data = <?php echo json_encode( $data ) ?>;
-var NumofRows = <?php echo json_encode( $count ) ?>; 
-var Data = [];
-
- for (m=0; m < NumofRows; m++){
-		 Data.push(new google.maps.LatLng(data[m][3], data[m][2]));
- }
-
+var taxiData = [
+ 
+  new google.maps.LatLng(37.752986, -122.403112),
+  new google.maps.LatLng(37.751266, -122.403355)
+];
 
 function initialize() {
   var markers = [];	
   var mapOptions = {
     zoom: 13,
-    center: new google.maps.LatLng(59.2911, 17.9327),
+    center: new google.maps.LatLng(37.774546, -122.433523),
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
 
   map = new google.maps.Map(document.getElementById("heat_map"),
       mapOptions);
 
-  var pointArray = new google.maps.MVCArray(Data);
+  var pointArray = new google.maps.MVCArray(taxiData);
 
   heatmap = new google.maps.visualization.HeatmapLayer({
     data: pointArray
@@ -185,7 +143,7 @@ google.maps.event.addDomListener(window, 'load', initialize);
 		</div>
 		<nav>
 			<ul id="menu">
-				<li ><a href="index.html"><span><span>About</span></span></a></li>
+				<li ><a href="t.html"><span><span>About</span></span></a></li>
 				<li><a href="bicycling_route.html"><span><span>Bicycling Route</span></span></a></li>
 				<li id="menu_active" class="end"><a href="heatmap.html"><span><span>Heatmap</span></span></a></li>
 			</ul>
@@ -213,10 +171,3 @@ Copyright &copy; 2015. Uppsala University All rights reserved.
 		</div>
 </body>
 </html>
-<?php
-			//4. release returned data
-			mysqli_free_result($result);
-
-	//5.close database connection
-	mysqli_close($connection);
-?>
