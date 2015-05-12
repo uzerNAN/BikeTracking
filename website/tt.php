@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+
+
 <html lang="en">
 <head>
 	<title>Heatmap</title>
@@ -6,19 +7,57 @@
 
 	<link rel="stylesheet" href="css/style.css" type="text/css" media="all">
 	<script type="text/javascript" src="js/jquery-1.5.2.js" ></script>
-	<script type="text/javascript" src="js/cufon-yui.js"></script>
-	<script type="text/javascript" src="js/cufon-replace.js"></script>  
-	<script type="text/javascript" src="js/jquery.jqtransform.js" ></script>
+
 	<script type="text/javascript" src="js/jquery.nivo.slider.pack.js"></script>
-	<script type="text/javascript" src="js/atooltip.jquery.js"></script>
-	<script type="text/javascript" src="js/script.js"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=visualization,places"></script>
 	<script>
-// Adding 500 Data Points
-var map, pointarray, heatmap;
 
+var map, pointarray, heatmap;
+<?php
+	//1. creat a database connection
+		$dbhost = "localhost";
+		$dbuser = "newuser";
+		$dbpass = "7zijian";
+		$dbname = "cn3";
+		$connection = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname);
+		
+	//Test if connection occurred
+	if(mysqli_connect_errno()){
+		die("Database connenction failed:".
+			mysqli_connect_error().
+			"(".mysqli_connect_errno().")"
+			);
+	}
+
+	//2.perform database query
+	$query 	= "select *";
+	$query .= "from test";
+	$result = mysqli_query($connection,$query);
+	// test if there was a query error
+	if(!$result)
+		die("Database query failed");
+
+			
+			$data = array();
+			$i = 0;
+			//3. use returned database
+			while($row = mysqli_fetch_array($result)){
+				//output data from each row
+				//var_dump($row);
+				$data[$i] = $row;
+				$i++;
+			}
+
+
+?>
+
+var data = <?php echo json_encode( $data ) ?>;
+alert( data[0][0] );
 var taxiData = [
- 
+  new google.maps.LatLng(data[0][0], data[0][1]),
+  new google.maps.LatLng(37.782745, -122.444586),
+  new google.maps.LatLng(37.782842, -122.443688),
+  new google.maps.LatLng(37.782919, -122.442815),
   new google.maps.LatLng(37.752986, -122.403112),
   new google.maps.LatLng(37.751266, -122.403355)
 ];
@@ -171,3 +210,10 @@ Copyright &copy; 2015. Uppsala University All rights reserved.
 		</div>
 </body>
 </html>
+<?php
+			//4. release returned data
+			mysqli_free_result($result);
+
+	//5.close database connection
+	mysqli_close($connection);
+?>
