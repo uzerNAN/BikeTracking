@@ -1,0 +1,7 @@
+create db:
+mysql -u root -p 
+source CykelData.sql
+
+connect with:
+mysql CykelData -u sqluser -p
+
