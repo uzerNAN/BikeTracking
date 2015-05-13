@@ -17,9 +17,9 @@ public class WakefulReceiver extends WakefulBroadcastReceiver
 		switch(intent.getAction()){
 			case("DATA_UPLOADED"):
 				Toast.makeText(context, "Data was successfully uploaded to server", Toast.LENGTH_LONG).show();
-				if(Tracking.mainActivity != null){
+				//if(Tracking.mainActivity != null){
 					//Tracking.mainActivity.resetUpdate();
-				}
+				//}
 				break;
 			case("UPLOAD_ERROR"):
 				Toast.makeText(context, "UNABLE TO UPLOAD DATA", Toast.LENGTH_LONG).show();
@@ -33,12 +33,6 @@ public class WakefulReceiver extends WakefulBroadcastReceiver
 				if(Tracking.mainActivity != null){
 					Bundle data = intent.getExtras();
 					Tracking.mainActivity.update(data.getInt("ACTIVITY_TYPE"), data.getString("ACTIVITY_NAME"), data.getInt("ACTIVITY_CONFIDENCE"));
-				}
-				break;
-			case("ADD_DATA"):
-				if(Tracking.mainActivity != null){
-					//Bundle data = intent.getExtras();
-					//Tracking.mainActivity.add(data.getInt("SID"), data.getDouble("LATITUDE"), data.getDouble("LONGITUDE"), data.getLong("TIME"), data.getFloat("ACCURACY"));
 				}
 				break;
 			default:

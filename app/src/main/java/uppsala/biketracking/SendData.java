@@ -37,7 +37,7 @@ public class SendData implements Runnable
 			//this.output = "";
 			this.setUploading(true);
 		try{
-			URL url = new URL("http://130.243.235.172:8080/MyServer/MyServlet");
+			URL url = new URL("http://130.238.15.203:8009/MyServer/MyServlet");
 			URLConnection connection = url.openConnection();
 			
 			connection.setDoOutput(true);

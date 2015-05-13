@@ -1,24 +1,20 @@
 package uppsala.biketracking;
 
-import android.app.*;
 import android.content.*;
-import android.content.res.*;
 import android.graphics.*;
 import android.location.*;
 import android.os.*;
 import android.support.v4.app.*;
+import android.text.*;
 import android.util.*;
 import android.view.*;
-import android.view.animation.*;
 import android.widget.*;
-import com.google.android.gms.common.*;
-import com.google.android.gms.common.api.*;
-import com.google.android.gms.location.*;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
-
-import android.view.animation.Interpolator;
+import java.io.*;
+import java.net.*;
 import java.util.*;
+import org.json.*;
 
 //import android.R;
 
@@ -33,8 +29,8 @@ public class Tracking extends FragmentActivity
 
 	
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
-	private Marker now;
-	private float zoom;
+	private Marker mMarker;
+	private float mZoom;
 	//private boolean mIsbound = false;
 	//private Intent intent;
 	//private GoogleApiClient mClient;
@@ -44,7 +40,7 @@ public class Tracking extends FragmentActivity
 	private int aType = -1, aConfidence = 100;
 	private Bitmap icon;
 	private CollectedData data = null;
-	
+	//private AutoCompleteTextView autoCompView;
 	//@Override
 	//protected void onDestroy
 	
@@ -57,54 +53,92 @@ public class Tracking extends FragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-		//intent = new Intent(this.getApplicationContext(), WakefulReceiver.class);
 		Intent i = new Intent(this, WakefulService.class);
-		//this.data = new CollectedData(this);
+		this.data = new CollectedData(this);
 		if(WakefulService.mainService == null){
 			i.setAction("SERVICE_START");
-			//.putExtra("LAST_SID", this.data.getLastSID())
-			//.putExtra("LAST_TIME", this.data.getLastTime());
 			this.startService(i);
 		}
 		//updating our titlebar
-		final boolean customTitleSupported = requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+		final boolean customTitleSupported = this.requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		
-		//latitude = (TextView) findViewById(R.id.latitude);
-		//longtitude = (TextView) findViewById(R.id.longtitude);
-		
-		//activity = new ActivityRecognitionIS();
-		//startService(intent);
-		//activity.
-		//intent.putExtra("name", "FIRST PACKET");
-		//intent.putExtra("confidence", 100);
-		//intent.putExtra("type", 0);
-		
-		//super.onCreate(savedInstanceState);
-		
-		zoom = 20;
-        setContentView(R.layout.activity_tracking);
+		this.mZoom = 20;
+        this.setContentView(R.layout.activity_tracking);
 		
 		if(customTitleSupported) {
-			getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.titlebar);
+			this.getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.titlebar);
 		}
-		//icon =  findViewById(R.drawable.icon_transparent);
-		//BitmapDescriptor icon_desc = icon.getDrawingCache();
-		coordinates = (LinearLayout) findViewById(R.id.coordinates);
-		icon = Bitmap.createBitmap(1,1, Bitmap.Config.ARGB_8888);
-		//a = Color.alpha(R.color.transparent);
-		//r = Color.red(R.color.transparent);
-		//g = Color.green(R.color.transparent);
-		//b = Color.blue(R.color.transparent);
-
-		icon.setPixel(0, 0, Color.argb(Color.alpha(R.color.transparent), Color.red(R.color.transparent), Color.green(R.color.transparent), Color.blue(R.color.transparent)));
-		//((TextView)coordinates.getChildAt(0)).setTextColor(Color.WHITE);
-		//((TextView)coordinates.getChildAt(0)).setBackgroundColor(Color.BLACK);
-		//((TextView)coordinates.getChildAt(1)).setTextColor(Color.WHITE);
-		//((TextView)coordinates.getChildAt(1)).setBackgroundColor(Color.BLACK);
-        setUpMapIfNeeded();
-		//sendBroadcast(intent);//new Intent(this, WakefulReceiver.class));
 		
+		/*this.autoCompView = (AutoCompleteTextView) this.findViewById(R.id.editloc);
+        this.autoCompView.setAdapter(new PlacesAutoCompleteAdapter(this,
+															  R.layout.list_item));*/
+															  
+		this.coordinates = (LinearLayout) this.findViewById(R.id.coordinates);
+		this.icon = Bitmap.createBitmap(1,1, Bitmap.Config.ARGB_8888);
+
+		this.icon.setPixel(0, 0, Color.argb(Color.alpha(R.color.transparent), Color.red(R.color.transparent), Color.green(R.color.transparent), Color.blue(R.color.transparent)));
+        this.setUpMapIfNeeded();
     }
+	/*private static final String TAG = "Tracking";
+	private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api/place";
+    private static final String TYPE_AUTOCOMPLETE = "/autocomplete";
+    private static final String OUT_JSON = "/json";     
+    private static final String API_KEY = "AIzaSyAfGNm4U1z8IbWbpE1rnyvFumLOg51eUws";
+	public static ArrayList<String> autocomplete(String input) {
+
+        ArrayList<String> resultList = null;
+
+        HttpURLConnection conn = null;
+        StringBuilder jsonResults = new StringBuilder();
+        try {
+			//Log.i(TAG, "I'm in");
+            StringBuilder sb = new StringBuilder(PLACES_API_BASE
+												 + TYPE_AUTOCOMPLETE + OUT_JSON);
+            sb.append("?sensor=false&key=" + API_KEY);
+            // sb.append("&components=country:uk");
+            sb.append("&input=" + URLEncoder.encode(input, "utf8"));
+
+            URL url = new URL(sb.toString());
+            conn = (HttpURLConnection) url.openConnection();
+            InputStreamReader in = new InputStreamReader(conn.getInputStream());
+
+            // Load the results into a StringBuilder
+            int read;
+            char[] buff = new char[1024];
+            while ((read = in.read(buff)) != -1) {
+                jsonResults.append(buff, 0, read);
+            }
+        } catch (MalformedURLException e) {
+            Log.e(TAG, "Error processing Places API URL", e);
+            return resultList;
+		} catch (IOException e) {
+            Log.e(TAG, "Error connecting to Places API", e);
+            return resultList;
+        } finally {
+            if (conn != null) {
+				//Log.i(TAG, "disconnecting, "+jsonResults.toString());
+                conn.disconnect();
+            }
+        }
+
+        try {
+            // Create a JSON object hierarchy from the results
+            JSONObject jsonObj = new JSONObject(jsonResults.toString());
+            JSONArray predsJsonArray = jsonObj.getJSONArray("predictions");
+
+            // Extract the Place descriptions from the results
+            resultList = new ArrayList<String>(predsJsonArray.length());
+            for (int i = 0; i < predsJsonArray.length(); i++) {
+                resultList.add(predsJsonArray.getJSONObject(i).getString(
+								   "description"));
+            }
+
+        } catch (JSONException e) {
+            Log.e("Tracking", "Cannot process JSON results", e);
+        }
+
+        return resultList;
+    }*/
 /*
 	@Override
 	protected void onDestroy()
@@ -130,38 +164,25 @@ public class Tracking extends FragmentActivity
     @Override
     protected void onResume() {
         super.onResume();
-		//registerReceiver(receiver, new IntentFilter("uppsala.biketracking"));
-		//requestUpdates();
-		mainActivity = this;
-		//doBindService();
-        setUpMapIfNeeded();
+		this.mainActivity = this;
+        this.setUpMapIfNeeded();
     }
 	
 	@Override
 	protected void onPause(){
-		//doUnbindService();
-		//removeUpdates();
 		super.onPause();
-		mainActivity = null;
-		//unregisterReceiver(receiver);
+		this.mainActivity = null;
 	}
-	
-	//CollectedData data == null;
-	public void add(int sid, double latitude, double longitude, long time, float accuracy){
+	public void add(int sid, double latitude, double longitude, long time, float speed, float accuracy){
 		if(this.data != null){
-			this.data.add(sid, latitude, longitude, time, accuracy);
+			this.data.add(sid, latitude, longitude, time, speed, accuracy);
 		}
 	}
-	public void update(int aType, String aName, int c){
-		if(!(aType == this.aType && c == this.aConfidence)){
-			this.aType = aType; this.aName = aName; this.aConfidence = c;
-			updateTitle();
+	public void update(int type, String name, int confidence){
+		if(!(type == this.aType && confidence == this.aConfidence)){
+			this.aType = type; this.aName = name; this.aConfidence = confidence;
+			this.updateMarkerTitle(this.aName+" ["+this.aConfidence+"%]");
 		}
-		if(this.data != null){
-			this.data.uploadData();
-		}
-		
-		
 	}
 	
     /**
@@ -181,16 +202,15 @@ public class Tracking extends FragmentActivity
      */
     private void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
-        if (mMap == null) {
+        if (this.mMap == null) {
             // Try to obtain the map from the SupportMapFragment.
-            mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
-                    .getMap();
+            this.mMap = ((SupportMapFragment) this.getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
             // Check if we were successful in obtaining the map.
-            if (mMap != null) {
-                setUpMap();
+            if (this.mMap != null) {
+                this.setUpMap();
             }
 			else {
-				Toast.makeText(getApplicationContext(),"Sorry! Unable to create maps", Toast.LENGTH_LONG).show();
+				Toast.makeText(this.getApplicationContext(),"Sorry! Unable to create maps", Toast.LENGTH_LONG).show();
 			}
         }
     }
@@ -202,160 +222,67 @@ public class Tracking extends FragmentActivity
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-        //mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
-		
-		mMap.setMyLocationEnabled(true);
-		
-		mMap.animateCamera(CameraUpdateFactory.zoomTo(zoom));
-		
-		mMap.setOnCameraChangeListener( new GoogleMap.OnCameraChangeListener(){
-			
+		this.mMap.setMyLocationEnabled(true);
+		this.mMap.animateCamera(CameraUpdateFactory.zoomTo(this.mZoom));
+		this.mMap.setOnCameraChangeListener( new GoogleMap.OnCameraChangeListener(){
 			@Override
 			public void onCameraChange(CameraPosition pos){
-				zoom = pos.zoom;
+				Tracking.this.mZoom = pos.zoom;
 			}
-			
 		});
 		
-    	mMap.setOnMyLocationChangeListener( new GoogleMap.OnMyLocationChangeListener(){
-			
+    	this.mMap.setOnMyLocationChangeListener( new GoogleMap.OnMyLocationChangeListener(){
 			@Override
 			public void onMyLocationChange(Location arg0){
-				//mMap.get.addMarker( new MarkerOptions().position( new LatLng(arg0.getLatitude(), arg0.getLongitude())).title("YOU ARE HERE"));
-				changePosition(arg0.getLatitude(), arg0.getLongitude());
-				//Toast.makeText(getApplicationContext(),"LATITUDE "+arg0.getLatitude()+" :: LONGTITUDE "+arg0.getLongitude()+" \r\nZOOM "+zoom, Toast.LENGTH_SHORT).show();
+				Tracking.this.changePosition(arg0.getLatitude(), arg0.getLongitude());
 			}
-			
 		});
 	}
-	private void updateTitle(){
-		if(now!=null){
-			now.setTitle(this.aName+" ["+aConfidence+"%]");
-			now.showInfoWindow();
+	private void updateMarkerTitle(String title){
+		if(this.mMarker!=null){
+			this.mMarker.setTitle(title);
+			this.mMarker.showInfoWindow();
 		}
 	}
-	
-	/*public void animateMarker(final Marker marker, final LatLng toPosition,
-							  final boolean hideMarker) {
-		final Handler handler = new Handler();
-		final long start = SystemClock.uptimeMillis();
-		Projection proj = mMap.getProjection();
-		Point startPoint = proj.toScreenLocation(marker.getPosition());
-		final LatLng startLatLng = proj.fromScreenLocation(startPoint);
-		final long duration = 500;
-		final Interpolator interpolator = new LinearInterpolator();
-		handler.post(new Runnable() {
-				@Override
-				public void run() {
-					long elapsed = SystemClock.uptimeMillis() - start;
-					float t = interpolator.getInterpolation((float) elapsed
-															/ duration);
-					double lng = t * toPosition.longitude + (1 - t)
-						* startLatLng.longitude;
-					double lat = t * toPosition.latitude + (1 - t)
-						* startLatLng.latitude;
-					marker.setPosition(new LatLng(lat, lng));
-					if (t < 1.0) {
-						// Post again 16ms later.
-						handler.postDelayed(this, 16);
-					} else {
-						if (hideMarker) {
-							marker.setVisible(false);
-						} else {
-							marker.setVisible(true);
-						}
-					}
-				}
-			});
-	}*/
-	
-	//CollectedData data = null;
-	
+	public void addMarker(float lat, float lon, String title){
+		this.mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lon)).title(title));
+	}
 	public void changePosition(double latitude, double longitude){
-		
-		/*:::*/
-		//if(data == null){
-		//	data = new CollectedData();
-		//}
-		//if(data != null){
-		//if(data.getTemp() != ""){
-		//	Toast.makeText(this, data.getTemp(), Toast.LENGTH_LONG).show();
-		//}
-		//}
-		/*:::*/
-		
-		if(now != null){
-			//now.setDraggable(true);
-			//animateMarker(now, new LatLng(latitude, longitude), true);
-			/*while(latitude != lat && longitude != lon){
-				if(latitude > lat){
-					
-				}
-				else if(latitude < lat){
-					lat 
-				}
-				if(longitude > lon){
-					
-				}
-				else if(longitude < lon){
-					
-				}
-				now.setPosition(new LatLng( latitude, longitude));
-			}*/
-			now.remove();
+		if(this.mMarker != null){
+			this.mMarker.remove();
 		}
-		// Getting latitude of the current location
-		//double latitude = location.getLatitude();
-
-		// Getting longitude of the current location
-		//double longitude = location.getLongitude();
-
-		// Creating a LatLng object for the current location latitude
-
 		LatLng latLng = new LatLng(latitude, longitude);
-		//MarkerOptions marker = ;
-		//marker.se
-		//marker.icon(BitmapDescriptorFactory.fromResource(R. .house_flag))
-		//	.anchor(0.0f, 1.0f);
-		if(mMap != null){
-			now = mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromBitmap(icon)));
-			updateTitle();
-			//now.showInfoWindow();
+		if(this.mMap != null){
+			this.mMarker = this.mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromBitmap(icon)));
+			this.updateMarkerTitle(this.aName+" ["+this.aConfidence+"%]");
 			// Showing the current location in Google Map
-			mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-
+			this.mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 			// Zoom in the Google Map
-			mMap.animateCamera(CameraUpdateFactory.zoomTo(zoom));
+			this.mMap.animateCamera(CameraUpdateFactory.zoomTo(this.mZoom));
 		}
-		if(coordinates != null) {
-			((TextView) coordinates.getChildAt(0)).setText("LATITUDE "+latitude);
-			((TextView) coordinates.getChildAt(1)).setText("LONGTITUDE "+longitude);
+		if(this.coordinates != null) {
+			((TextView) this.coordinates.getChildAt(0)).setText("LATITUDE "+latitude);
+			((TextView) this.coordinates.getChildAt(1)).setText("LONGITUDE "+longitude);
 		}
-		if(lineOp != null){
-			if(lineOp.getPoints().size() >= lineSize){
-				addLine();
-			}
-		}
-		addLinePoint(latLng);
 	}
+	/*private void requestPath(double fLatitude, double fLongitude, ){
+		
+	}*/
 	private List<Polyline> points;
-	private PolylineOptions lineOp;
-	private final static int lineSize = 5;
+	private PolylineOptions lineOpt;
 	private void addLinePoint(LatLng point){
-		if(lineOp == null){
-			lineOp = new PolylineOptions().width(5).color(Color.GREEN);
+		if(this.lineOpt == null){
+			this.lineOpt = new PolylineOptions().width(5).color(Color.GREEN);
 		}
-		lineOp.add(point);
+		this.lineOpt.add(point);
 	}
 	private void addLine(){
-		if(lineOp != null){
+		if(lineOpt != null){
 			if(points == null){
 				points = new ArrayList<Polyline>();
 			}
-			points.add(mMap.addPolyline(lineOp));
-			lineOp = null;
+			points.add(mMap.addPolyline(lineOpt));
+			lineOpt = null;
 		}
 	}
-	
-	
 }

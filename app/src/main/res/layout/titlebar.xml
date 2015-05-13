@@ -21,4 +21,11 @@
 		android:textColor="@color/white"
 		android:background="@color/black"
 		/>
+	<!-- <AutoCompleteTextView
+		android:id="@+id/editloc"
+		android:layout_gravity="center" 
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:inputType="textAutoComplete|textAutoCorrect">   
+	</AutoCompleteTextView> -->
 </LinearLayout>

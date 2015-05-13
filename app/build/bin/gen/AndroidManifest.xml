@@ -54,12 +54,6 @@
 			<intent-filter>
 
 				<action
-					android:name="uppsala.biketracking.WakefulReceiver"/>
-
-				<action
-					android:name="SERVICE_START"/>
-
-				<action
 					android:name="SERVICE_DATA"/>
 
 				<action
@@ -70,9 +64,6 @@
 
 				<action
 					android:name="UPLOAD_ERROR"/>
-
-				<action
-					android:name="SERVICE_STOP"/>
 
 			</intent-filter>
 

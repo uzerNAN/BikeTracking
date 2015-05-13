@@ -31,13 +31,10 @@
 			android:label="@string/app_name"
 			android:enabled="true" >
 			<intent-filter>
-				<action android:name="uppsala.biketracking.WakefulReceiver" />
-				<action android:name="SERVICE_START" />
 				<action android:name="SERVICE_DATA" />
 				<action android:name="DATA_UPLOADED" />
 				<action android:name="FILE_ERROR" />
 				<action android:name="UPLOAD_ERROR" />
-				<action android:name="SERVICE_STOP" />
 			</intent-filter>
 		</receiver>
 		

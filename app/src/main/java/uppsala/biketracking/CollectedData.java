@@ -1,10 +1,9 @@
 package uppsala.biketracking;
 
 import android.content.*;
-import android.net.*;
+import android.location.*;
 import android.util.*;
 import java.io.*;
-import java.net.*;
 import java.util.*;
 
 public class CollectedData
@@ -12,18 +11,12 @@ public class CollectedData
 	
 	private List<Data> data;
 	private int size = 0;
-	//private boolean temp = true;
 	private Context context;
 	private SendData send;
-	//private String temp;
 	public CollectedData(Context c){
 		this.context = c;
 		this.send = new SendData();
 		this.data = new ArrayList<Data>();
-		
-		this.importFile(WakefulService.filePath);
-		//	this.exportActivityFile();
-
 	}
 	
 	public boolean uploading(){
@@ -36,15 +29,11 @@ public class CollectedData
 	public boolean dataIsEmpty(){
 		return this.size == 0;
 	}
-	public void add(int id, double latitude, double longitude, long time, float accuracy){
-		this.data.add(this.size, new Data(id, latitude, longitude, time, accuracy));
+	public void add(int id, double latitude, double longitude, long time, float speed, float accuracy){
+		this.data.add(this.size, new Data(id, latitude, longitude, time, speed, accuracy));
 		this.size++;
 	}
-	//public void addUpdate(int id, double latitude, double longitude, long time){
-		//this.update.add(this.data.get(this.data.size()-1));
-		//Log.i("Add", this.data.get(this.data.size()-1).toString());
-	//}
-	public List<Data> getBySID(int sid){
+	/*public List<Data> getBySID(int sid){
 		List<Data> iter = new ArrayList<Data>();
 		for(int i = 0; i < this.size; i++){
 			if(this.data.get(i).getSID() == sid){
@@ -52,7 +41,7 @@ public class CollectedData
 			}
 		}
 		return iter;
-	}
+	}*/
 	public Data get(int id){
 		Data iter = null;
 		if(id < this.size){
@@ -61,9 +50,6 @@ public class CollectedData
 		return iter;
 	}
 	public boolean isOnline(){
-		/*ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo activeNI = cm.getActiveNetworkInfo();
-		return activeNI != null && activeNI.isConnected();*/
 		return WakefulService.isOnline(this.context);
 	}
 	public void resetData(){
@@ -87,7 +73,7 @@ public class CollectedData
 	public boolean uploadData(){
 		boolean success = false;
 		if(!this.uploading() && this.isOnline()){
-			if(this.dataIsEmpty()) { this.importFile(WakefulService.filePath); }
+			//if(this.dataIsEmpty()) { this.importFile(WakefulService.filePath); }
 			if(!this.dataIsEmpty()){
 				this.send.setInput(this.dataToString());
 				new Thread(this.send).start();
@@ -102,7 +88,7 @@ public class CollectedData
 		return success;
 	}
 	
-	public void setIdSequence(int newsid, int index){
+	/*public void setIdSequence(int newsid, int index){
 		int sid = newsid;
 		long prvTime = 0;
 		if(index < this.size){
@@ -116,9 +102,25 @@ public class CollectedData
 		}
 	}
 	
-	/*public boolean exportFile(String path){
+	private void setSpeed(){
+		Location l1 = new Location("previous location");
+		l1.setLatitude(this.data.get(0).getLatitude());
+		l1.setLongitude(this.data.get(0).getLongitude());
+		long time = this.data.get(0).getTime();
+		Location l2 = new Location("current location");
+		for(int i = 1; i < this.size; i++){
+			l2.setLatitude(this.data.get(i).getLatitude());
+			l2.setLongitude(this.data.get(i).getLongitude());
+			this.data.get(i).setSpeed(1000*l2.distanceTo(l1)/(this.data.get(i).getTime()-time));
+			l1.set(l2);
+			time = this.data.get(i).getTime();
+		}
+	}
+	
+	public boolean exportFile(String path){
 		boolean imprt = true;
-		this.setIdSequence(0,0);
+		//this.setIdSequence(0,0);
+		//this.setSpeed();
 		File updateLog = new File(path);
 		if(!updateLog.exists()){
 			try{
@@ -132,6 +134,7 @@ public class CollectedData
 		if(imprt){
 			try{
 				FileWriter fil = new FileWriter(updateLog);
+				//fil.write(this.dataToString());
 				fil.write("");
 				fil.close();
 				BufferedWriter buf = new BufferedWriter(new FileWriter(updateLog, true));
@@ -140,6 +143,7 @@ public class CollectedData
 							 +"|LATITUDE "+this.data.get(i).getLatitude()
 							 +"|LONGITUDE "+this.data.get(i).getLongitude()
 							 +"|TIME "+this.data.get(i).getTime()
+							 +"|SPEED "+this.data.get(i).getSpeed()
 							 +"|ACCURACY "+this.data.get(i).getAccuracy());
 					buf.newLine();
 				}
@@ -157,7 +161,6 @@ public class CollectedData
 	
 	private void removeLastData(int last){
 		if(last > 0 && !this.dataIsEmpty() && this.size >= last){
-			//int di = this.data.size()-this.update.size(); 
 			boolean finalization = true;
 			for(int i = this.size-1; i >= (this.size-last); i--){
 				if(finalization){
@@ -167,13 +170,8 @@ public class CollectedData
 					}
 				}
 				this.data.remove(i);
-				
-				//this.data.remove(di+i);
 			}
 			this.size -= last;
-			//if(this.dataIsEmpty()){
-			//	this.resetData();
-			//}
 			Log.i("RemoveLastUpdate","SUCCESSFULLY REMOVED "+last+" LAST OBJECTS FROM LISTS; finalization="+finalization);
 		}
 		else{
@@ -188,30 +186,29 @@ public class CollectedData
 			try{
 				BufferedReader buf = new BufferedReader(new FileReader(updateLog));
 				String line;
-				String[] splitLine, splitSID, splitTime, splitAccuracy, splitLatitude, splitLongitude;
-				//int sid = 0;
-				//Data item;
-				//buf.
+				String[] splitLine, splitSID, splitTime, splitSpeed, splitAccuracy, splitLatitude, splitLongitude;
 				while((line = buf.readLine()) != null){
-					/*if(line.equals(WakefulService.no_need_for_upload)){
-						//this.data.addAll(this.update);
-						this.removeLastData(counter);
-						//update = new ArrayList<Data>();
-					}
-					else */
 					if(line.matches("[A-Z0-9.| ]*")){
 						splitLine = line.split("\\|");
 						splitSID = splitLine[0].split(" ");
 						splitLatitude = splitLine[1].split(" ");
 						splitLongitude = splitLine[2].split(" ");
 						splitTime = splitLine[3].split(" ");
-						splitAccuracy = splitLine[4].split(" ");
-						if(splitSID[0].equals("SID") && splitLatitude[0].equals("LATITUDE") && splitLongitude[0].equals("LONGITUDE") && splitTime[0].equals("TIME") && splitAccuracy[0].equals("ACCURACY")){
-							this.add(Integer.parseInt(splitSID[1]), Double.parseDouble(splitLatitude[1]), Double.parseDouble(splitLongitude[1]), Long.parseLong(splitTime[1]), Float.parseFloat(splitAccuracy[1]));
+						splitSpeed = splitLine[4].split(" ");
+						splitAccuracy = splitLine[5].split(" ");
+						if(splitSID[0].equals("SID")
+						&& splitLatitude[0].equals("LATITUDE") 
+						&& splitLongitude[0].equals("LONGITUDE") 
+						&& splitTime[0].equals("TIME") 
+						&& splitSpeed[0].equals("SPEED")
+						&& splitAccuracy[0].equals("ACCURACY")){
+							this.add(Integer.parseInt(splitSID[1]), Double.parseDouble(splitLatitude[1]), Double.parseDouble(splitLongitude[1]), Long.parseLong(splitTime[1]), Float.parseFloat(splitSpeed[1]), Float.parseFloat(splitAccuracy[1]));
 							counter++;
 						}
 						else{
 							Log.i("ImportActivityFile","FILE LINE HAS DIFFERENT CONTENT");
+							imprt = false;
+							break;
 						}
 					}
 					else{
@@ -225,7 +222,6 @@ public class CollectedData
 			catch(ArrayIndexOutOfBoundsException e){
 				imprt = false;
 				e.printStackTrace();
-				//given file has different structure
 			}
 			catch(IOException e){
 				imprt = false;
@@ -234,23 +230,13 @@ public class CollectedData
 			catch(Exception e){
 				imprt = false;
 				e.printStackTrace();
-				//Log.i("ImportActivityFile",e.toString());
 			}
 		}
-		if(imprt){
-			this.uploadData();
-		}
-		else{
+		if(!imprt){
 			this.removeLastData(counter);
 		}
+		//Log.i("TO STRING", this.dataToString());
 		Log.i("ImportActivityFile", "imprt="+imprt);
-		
-		//::://
-		//if(this.temp){
-		//	this.temp = !this.exportActivityFile();
-		//}
-		//::://
-		
 		return imprt;
 	}
 	public String toString(){
@@ -260,7 +246,7 @@ public class CollectedData
 		String result = "[";
 		if(this.size > 0){
 			for(int i = 0; i < this.size; i++){
-				result += "\""+this.data.get(i).toString()+"\"";
+				result += this.data.get(i).toString();
 				if(i+1 < this.size){
 					result += ",";
 				}
@@ -270,9 +256,7 @@ public class CollectedData
 		return result;
 	}
 	public void finalization(){
-		//boolean finalization = true;
 		this.resetData();
-		//this.data.clear();
 		try{
 			this.finalize();
 		}

@@ -10,7 +10,9 @@ import com.google.android.gms.common.*;
 import com.google.android.gms.common.api.*;
 import com.google.android.gms.location.*;
 import java.io.*;
-import java.util.*;
+//import java.net.*;
+//import java.util.*;
+//mport org.json.*;
 
 public class WakefulService extends Service implements com.google.android.gms.location.LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener
 {
@@ -41,32 +43,32 @@ public class WakefulService extends Service implements com.google.android.gms.lo
 	//private ActivityRecognitionApi recApi;
 	//private FusedLocationProviderApi locPro;
 	private LocationRequest locReq;
-	private int aType = -1, aConfidence = 100, time = 15, count = 0, prvSID = -1;
+	private int aType = -1, aConfidence = 100, time = 15, count = 0;//, currSID = 0;
 	//private double prvLatitude, prvLongitude;
-	private long prvTime = 0;
+	//private long prvTime = 0;
 	private String aName = "NO ACTIVITY";
 	private Location lLoc;
-	private boolean destroy = false, record = false, test = false;
+	private boolean destroy = false, record = false;//, test = false;
 	private GoogleApiClient mClient;
 	private CollectedData data = null;
-	private ResultCallback<Status> status;
+	//private ResultCallback<Status> statusUpd,statusLoc;
 	//public final static String no_need_for_upload = "UPLOADED";
 	//private int test = 10;
 
 	public void successfullyUploaded(){
-		if(Tracking.mainActivity != null){
-			this.sendBroadcast(new Intent().setAction("DATA_UPLOADED"));
-		}
+		//if(Tracking.mainActivity != null){
+		this.sendBroadcast(new Intent().setAction("DATA_UPLOADED"));
+		//}
 		//this.addUpdate(this.no_need_for_upload);
 		this.clearCollectedFile();
 		this.data().resetData();
-		this.prvSID = this.data().getLastSID(); this.prvTime = this.data().getLastTime();
+		//this.currSID = this.data().getLastSID(); this.prvTime = this.data().getLastTime();
 		
 	}
 	public void failedToUpload(){
-		if(Tracking.mainActivity != null){
-			this.sendBroadcast(new Intent().setAction("UPLOAD_ERROR"));
-		}
+		//if(Tracking.mainActivity != null){
+		this.sendBroadcast(new Intent().setAction("UPLOAD_ERROR"));
+		//}
 		//this.data().resetData();
 	}
 	
@@ -132,13 +134,13 @@ public class WakefulService extends Service implements com.google.android.gms.lo
 	}
 	
 	protected synchronized void buildGoogleApiClient() {
-		mClient = new GoogleApiClient.Builder(this)
+		this.mClient = new GoogleApiClient.Builder(this)
 			.addApi(LocationServices.API)
 			.addApi(ActivityRecognition.API)
 			.addConnectionCallbacks(this)
 			.addOnConnectionFailedListener(this)
 			.build();
-		
+		this.mClient.connect();
 	}
 	
 	@Override
@@ -146,14 +148,16 @@ public class WakefulService extends Service implements com.google.android.gms.lo
         super.onCreate();
 		//intent = new Intent(this.getApplicationContext(), WakefulReceiver.class);
 		this.buildGoogleApiClient();
+		
 	}
 	
 	private CollectedData data(){
 		if(this.data == null){
 			this.data = new CollectedData(this.getApplicationContext());
 		}
-		else if(this.data.dataIsEmpty()){
+		if(this.data.dataIsEmpty()){
 			this.data.importFile(this.filePath);
+			//this.data.exportFile("sdcard/dataToString.txt");
 		}
 		return this.data;
 	}
@@ -167,11 +171,11 @@ public class WakefulService extends Service implements com.google.android.gms.lo
 			if(intent.getAction().equals("SERVICE_START")){
 				//this.startInt = intent;
 				//this.data = new CollectedData(this.getApplicationContext());
-				if(this.data == null){
-					this.prvSID = this.data().getLastSID();
-					this.prvTime = this.data().getLastTime();
-				}
-				//Log.i("SERVICE START", "GOT SERVICE_START ON START");
+				//if(this.data == null){
+				//this.currSID = this.data().getLastSID();
+				//this.prvTime = this.data().getLastTime();
+				//}
+				Log.i("SERVICE START", "GOT SERVICE_START ON START");
 				//sendBroadcast(new Intent("SERVICE_BROADCAST").setAction("SERVICE_DATA"));
 			}
 			if(intent.getAction().equals("SERVICE_STOP")){
@@ -179,75 +183,50 @@ public class WakefulService extends Service implements com.google.android.gms.lo
 				this.onDestroy();
 			}
 			super.onStart(intent, startId);
-			if(!this.mClient.isConnected()){
+			/*if(!this.mClient.isConnected() && !this.mClient.isConnecting()){
 				this.mClient.connect();
-			}
+				Log.i("SERVICE CONNECT", "SERVICE WAS NOT CONNECTED");
+			}*/
 		}
 	}
-	
-	/*@Override
-	protected void onStop(){
-		Log.i("SERVICE UPDATE", "ON STOP");
-		// TODO: Implement this method
-		if(destroy){
-			removeUpdates();
-			penInt.cancel();
-			mClient.disconnect();
-			//WakefulReceiver.completeWakefulIntent(startInt);
-			mainService = null;
-			super.onStop();
-		}
-	}*/
-	
-	
 	@Override
 	public void onConnected(Bundle p1){
 		Intent i = new Intent(this, WakefulService.class);
-		this.status = new ResultCallback<Status>() {
-			@Override
-			public void onResult(Status status) {
-				if (status.isSuccess()) {
-					Log.i("SERVICE UPDATE REQUEST", "Successfully registered/removed updates");
-				} else {
-					Log.i("SERVICE UPDATE REQUEST", "Failed to register/remove updates");
-				}
-			}
-		};
 		i.setAction("ACTIVITY_DATA");
 		this.penInt = PendingIntent.getService(this, 7422, i, PendingIntent.FLAG_UPDATE_CURRENT);
 		this.locReq = LocationRequest.create();
 		this.locReq.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 		this.locReq.setFastestInterval(3000);
 		this.locReq.setInterval(10000);
-		this.requestRecognitionUpdates(time);
+		this.requestRecognitionUpdates(this.time);
 		//mainService = this;
 	}
 	
 	private void requestRecognitionUpdates(int sec){
-		if(this.mClient.isConnected() && !this.test){
-			ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(this.mClient, sec*1000, this.penInt)
-				.setResultCallback(this.status);
+		if(this.mClient.isConnected()){ //&& !this.test){
+			ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(this.mClient, sec*1000, this.penInt);
+				//.setResultCallback(this.statusUpd);
 		}
 	}
 	
 	private void requestLocationUpdates(){
-		if(this.mClient.isConnected() && !this.test){
-			LocationServices.FusedLocationApi.requestLocationUpdates(this.mClient, this.locReq, this)
-				.setResultCallback(this.status);
+		if(this.mClient.isConnected()){ //&& !this.test){
+			LocationServices.FusedLocationApi.requestLocationUpdates(this.mClient, this.locReq, this);
+				//.setResultCallback(this.statusLoc);
 		}
 	}
 
 	private void removeRecognitionUpdates(){
-		if(this.mClient.isConnected() && !this.test){
-			ActivityRecognition.ActivityRecognitionApi.removeActivityUpdates(this.mClient, this.penInt)
-				.setResultCallback(this.status);
+		if(this.mClient.isConnected()){ //&& !this.test){
+			ActivityRecognition.ActivityRecognitionApi.removeActivityUpdates(this.mClient, this.penInt);
+				//.setResultCallback(this.statusUpd);
 		}
 	}
 	
 	private void removeLocationUpdates(){
-		if(this.mClient.isConnected() && !this.test){
-			LocationServices.FusedLocationApi.removeLocationUpdates(this.mClient, this.penInt)
-				.setResultCallback(this.status);
+		if(this.mClient.isConnected()){ //&& !this.test){
+			LocationServices.FusedLocationApi.removeLocationUpdates(this.mClient, this.penInt);
+				//.setResultCallback(this.statusLoc);
 		}
 	}
 	
@@ -273,37 +252,34 @@ public class WakefulService extends Service implements com.google.android.gms.lo
 	@Override
 	public void onLocationChanged(Location p1)
 	{
-		lLoc = p1;
+		
 		if(record){
 			//String update = "";
-			
-			if(Long.compare(this.prvTime, 0) > 0 && Long.compare((p1.getTime()-this.prvTime), this.sessionTimeout) > 0){
-				this.prvSID++;
+			int currSID = this.data().getLastSID();
+			long prvTime = this.data().getLastTime();
+			if(Long.compare(prvTime, 0) > 0 && Long.compare((p1.getTime()-prvTime), this.sessionTimeout) > 0){
+				currSID++;
 			}
-			//else if(this.prvTime == 0){
-				
-			//}
-			if(!addUpdate("SID "+this.prvSID
+			
+			float speed = 0;
+			if(this.lLoc != null && Long.compare(prvTime, 0) > 0 && currSID == this.data().getLastSID()){ speed = 1000*p1.distanceTo(lLoc)/(p1.getTime()-prvTime); }
+							 else{ speed = p1.getSpeed(); }
+			
+			if(!addUpdate(
+			  "SID "+currSID
 			+"|LATITUDE "+p1.getLatitude()
 			+"|LONGITUDE "+p1.getLongitude()
 			+"|TIME "+p1.getTime()
+			+"|SPEED "+speed
 			+"|ACCURACY "+p1.getAccuracy())){
 				this.sendBroadcast(new Intent("FILE_PERMISSION").setAction("FILE_ERROR"));
 			}
 			else{
-				this.data().add(this.prvSID, p1.getLatitude(), p1.getLongitude(), p1.getTime(), p1.getAccuracy());
-				this.prvTime = p1.getTime();
+				this.data().add(currSID, p1.getLatitude(), p1.getLongitude(), p1.getTime(), speed, p1.getAccuracy());
+				prvTime = p1.getTime();
 			}
 			
-			/*if(Tracking.mainActivity != null){
-				sendBroadcast(new Intent()
-							  .setAction("ADD_DATA")
-							  .putExtra("SID", this.prvSID)
-							  .putExtra("LATITUDE", p1.getLatitude())
-							  .putExtra("LONGITUDE", p1.getLongitude())
-							  .putExtra("TIME", p1.getTime())
-							  .putExtra("ACCURACY", p1.getAccuracy()));
-			}*/
+			lLoc = p1;
 		}
 		
 		// TODO: Implement this method
@@ -324,11 +300,11 @@ public class WakefulService extends Service implements com.google.android.gms.lo
 		//Log.i("SERVICE UPDATE", "ON HANDLE INTENT");
 		//record = false;
 		if (ActivityRecognitionResult.hasResult(intent)){
-			Bundle b = intent.getExtras();
-			Set<String> kset = b.keySet();
-			for(String key : kset){
-				Log.i("ACTIVITY INTENT", "Key : "+key+" , Object.toString : "+b.get(key).toString());
-			}
+			//Bundle b = intent.getExtras();
+			//Set<String> kset = b.keySet();
+			//for(String key : kset){
+			//	Log.i("ACTIVITY INTENT", "Key : "+key+" , Object.toString : "+b.get(key).toString());
+			//}
 			DetectedActivity probableActivity = ActivityRecognitionResult.extractResult(intent).getMostProbableActivity();
 			
 			this.aConfidence = probableActivity.getConfidence();
@@ -363,6 +339,10 @@ public class WakefulService extends Service implements com.google.android.gms.lo
 					break;
 			}
 			
+			//::://
+			//this.aType = DetectedActivity.ON_BICYCLE;
+			//::://
+			
 			if(Tracking.mainActivity != null){
 				this.sendBroadcast(new Intent("SERVICE_UPDATE")
 							  .setAction("SERVICE_DATA")
@@ -382,30 +362,31 @@ public class WakefulService extends Service implements com.google.android.gms.lo
 					this.requestRecognitionUpdates(time);
 				}
 			}
-			
-			if(this.record && this.aType != DetectedActivity.ON_BICYCLE){
+			else if(this.record && this.aType != DetectedActivity.ON_BICYCLE){
 				this.record = false;
 				this.removeLocationUpdates();
 			}
 			
-			if(this.count > 5 && !this.record){
-				if(this.time<60){
-					this.removeRecognitionUpdates();
-					this.time+=5; this.count=0;
-					this.requestRecognitionUpdates(this.time);
+			if(!this.record){
+				if(this.count > 5){
+					if(this.time<60){
+						this.removeRecognitionUpdates();
+						this.time+=5; this.count=0;
+						this.requestRecognitionUpdates(this.time);
+					}
+					if(!this.data().uploadData() && !this.data().dataIsEmpty()){
+						this.data().resetData();
+					}
 				}
-				if(!this.data().uploadData() && !this.data().dataIsEmpty()){
-					this.data().resetData();
+				else if(this.count<=5){
+					this.count++;
 				}
-			}
-			else if(this.count<=5){
-				this.count++;
 			}
 			//this.data().uploadData();
 		}
 		
 		return super.onStartCommand(intent, flags, startId);
-	
+		//return START_STICKY;
 	}
 
 	public class WakefulBinder extends Binder {
@@ -418,10 +399,11 @@ public class WakefulService extends Service implements com.google.android.gms.lo
 	{
 		// TODO: Implement this method
 		return this.binder;
+	//	return null;
 	}
 	private final IBinder binder = new WakefulBinder();
 
-	public boolean testRun(){
+	/*public boolean testRun(){
 		boolean run = true;
 		Intent i = new Intent()
 			.putExtra("com.google.android.location.internal.EXTRA_RELEASE_VERSION", 2014)
@@ -432,9 +414,8 @@ public class WakefulService extends Service implements com.google.android.gms.lo
 		this.count = 0;
 		this.time = 15;
 		this.test = true;
-		this.data().resetData();
 		//TO-DO: WRITE TESTS FOR FUNCTIONS
 		return run;
-	}
+	}*/
 	
 }

@@ -9,12 +9,14 @@ public class Data
 	//private final int latitude;
 	private final long TIME;
 	private final float ACCURACY;
-	public Data(int i, double lat, double lon, long t, float ac){
-		this.SID = i;
-		this.LATITUDE = lat;
-		this.LONGITUDE = lon;
-		this.TIME = t;
-		this.ACCURACY = ac;
+	private float SPEED;
+	public Data(int sid, double latitude, double longitude, long time, float speed, float accuracy){
+		this.SID = sid;
+		this.LATITUDE = latitude;
+		this.LONGITUDE = longitude;
+		this.TIME = time;
+		this.SPEED = speed;
+		this.ACCURACY = accuracy;
 	}
 	public int getSID(){
 		return this.SID;
@@ -31,6 +33,12 @@ public class Data
 	public long getTime(){
 		return this.TIME;
 	}
+	public float getSpeed(){
+		return this.SPEED;
+	}
+	public void setSpeed(float speed){
+		this.SPEED = speed;
+	}
 	public float getAccuracy(){
 		return this.ACCURACY;
 	}
@@ -43,13 +51,14 @@ public class Data
 		 		   && this.LATITUDE == object.getLatitude()
 		 		   && this.LONGITUDE == object.getLongitude()
 				   && this.TIME == object.getTime()
-				   && this.ACCURACY == object.getAccuracy());
+				   && this.ACCURACY == object.getAccuracy()
+				   && this.SPEED == object.getSpeed());
 		}
 		return equals;
 	}
 	@Override
 	public String toString(){
-		return "{\"SID\":\""+this.SID+"\",\"LATITUDE\":\""+this.LATITUDE+"\",\"LONGITUDE\":\""+this.LONGITUDE+"\",\"TIME\":\""+this.TIME+"\",\"ACCURACY\":\""+this.ACCURACY+"\"}";
+		return "{\"SID\":\""+this.SID+"\",\"LATITUDE\":\""+this.LATITUDE+"\",\"LONGITUDE\":\""+this.LONGITUDE+"\",\"TIME\":\""+this.TIME+"\",\"SPEED\":\""+this.SPEED+"\",\"ACCURACY\":\""+this.ACCURACY+"\"}";
 	}
 	//@Override
 	public boolean finalization(){
