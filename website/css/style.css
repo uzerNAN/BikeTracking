@@ -1,3 +1,9 @@
+input{
+	height:35px;
+	width:60px;
+
+}
+	
 #heat_map,#bicycling_map {
 	margin-top:20px;
 	margin-bottom:30px;
@@ -52,7 +58,7 @@
 #panel {
     position: relative;
     left: 20%;
-	width:445px;
+	width:500px;
 }
 /* Getting the new tags to behave */
 article, aside, audio, canvas, command, datalist, details, embed, figcaption, figure, footer, header, hgroup, keygen, meter, nav, output, progress, section, source, video {display:block}
@@ -64,7 +70,13 @@ mark, rp, rt, ruby, summary, time {display:inline}
 .relative {position:relative}
 * +html .relative {position:static}
 /* Global properties */
-body {background:url(../images/new_backgroud1.jpg) top center no-repeat #000;border:0;font:13px Arial, Helvetica, sans-serif;color:#3a3a3a;line-height:20px;min-width:980px;padding:10px 0}
+body {background:url(../images/new_backgroud1.jpg) top center no-repeat #000; background-size: 115em 90em;border:0;font:13px Arial, Helvetica, sans-serif;color:#3a3a3a;line-height:20px;min-width:980px;padding:10px 0}
+.centered
+{
+	margin-left: 20%;
+
+
+}
 .ic, .ic a {border:0;float:right;background:#fff;color:#f00;width:50%;line-height:10px;font-size:10px;margin:-220% 0 0 0;overflow:hidden;padding:0}
 .css3 {border-radius:8px;-moz-border-radius:8px;-webkit-border-radius:8px;box-shadow:0 0 4px rgba(0, 0, 0, .4);-moz-box-shadow:0 0 4px rgba(0, 0, 0, .4);-webkit-box-shadow:0 0 4px rgba(0, 0, 0, .4);position:relative}
 /* Global Structure */
@@ -142,7 +154,7 @@ footer a:hover {}
 /* Selects */
 .jqTransformSelectWrapper {position:relative}
 .jqTransformSelectWrapper div {float:left;font:12px Arial, Helvetica, sans-serif;color:#7f7f7f;display:block;position:relative;white-space:nowrap;height:19px;line-height:19px;overflow:hidden;cursor:pointer;border:1px solid #e5e5e5;background:#fff}
-.jqTransformSelectWrapper div span {padding:0 0 0 7px;display:block}
+.jqTransformSelectWrapper div {padding:0 0 0 7px;display:block}
 a.jqTransformSelectOpen {display:block;position:absolute;top:0px;right:0px;width:17px;height:18px;background:url(../images/select.gif) 4px 6px no-repeat}
 .jqTransformSelectWrapper ul {position:absolute;top:20px;left:0px;background:#fff;border:1px solid #e5e5e5;font:12px Arial, Helvetica, sans-serif;display:none;z-index:10; padding:5px 0 2px 0;height:50px;overflow:auto;min-height:20px}
 .jqTransformSelectWrapper ul a {display:block;padding:0 7px;text-decoration:none;color:#7f7f7f}

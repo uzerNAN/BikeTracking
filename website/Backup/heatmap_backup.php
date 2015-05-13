@@ -1,4 +1,4 @@
-<?php require_once 'functions.php'; ?>
+
 
 <html lang="en">
 <head>
@@ -14,107 +14,62 @@
 
 var map, pointarray, heatmap;
 <?php
-	$dbhost = "localhost";
-	$dbuser = "newuser";
-	$dbpass = "7zijian";
-	$dbname = "cn3";
-	$connection = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname);
-
+	//1. creat a database connection
+		$dbhost = "localhost";
+		$dbuser = "newuser";
+		$dbpass = "7zijian";
+		$dbname = "cn3";
+		$connection = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname);
+		
+	//Test if connection occurred
 	if(mysqli_connect_errno()){
 		die("Database connenction failed:".
-		mysqli_connect_error().
-		"(".mysqli_connect_errno().")"
-		);
+			mysqli_connect_error().
+			"(".mysqli_connect_errno().")"
+			);
 	}
-		
-	 if($_POST['date']!='0'&&$_POST['time']!='0'){ 
-        echo "both OK";
-	 }elseif($_POST['date']!='0'){
-			$date = $_POST["date"];		
-			$query = "SELECT * ";
-			$query.= "FROM node ";
-			$query.= "WHERE date(time)='{$date}';";
-			
-	 }elseif($_POST['time']!='0'){
-			$time = (int)$_POST['time'];
-			$time_from = $time - 1;
-			$query = "SELECT * ";
-			$query.= "FROM node ";
-			$query.= "WHERE time(time)<'{$time}:00:00' && time(time)>'{$time_from}:00:00';";
-		
-	 }else{
-		 echo "Nothing";
-	 }
-	 
-	$result = mysqli_query($connection, $query);
+
+	//2.perform database query
+	$query 	= "select * ";
+	$query .= "from node ";
+	$result = mysqli_query($connection,$query);
+	// test if there was a query error
 	if(!$result)
 		die("Database query failed");
-	$count = mysqli_num_rows($result);
-	$data = array();
-	$i = 0;
-	while($row = mysqli_fetch_array($result)){
-		$data[$i] = $row;
-		$i++;
-	}	 
-	 /*
-	 if(isset($_POST['date'])||isset($_POST['time'])){ 
-        
-		
-        //$menu_name = mysqli_real_escape_string($connection, $_POST["menu_name"]);
-		if(isset($_POST['time'])){
-			$date = $_POST["date"];		
-			$query = "SELECT * ";
-			$query.= "FROM node ";
-			$query.= "WHERE date(time)='{$date}';";
-			
-			$result = mysqli_query($connection, $query);
-			
-			if(!$result)
-				die("Database query failed");
+
 			
 			$data = array();
 			$i = 0;
-			
+			//3. use returned database
 			while($row = mysqli_fetch_array($result)){
+				//output data from each row
+				//var_dump($row);
 				$data[$i] = $row;
 				$i++;
 			}
-			$count = mysqli_num_rows($result);
-		
-			if($result){
-				$_SESSION["message"] = "succeed.";
-				redirect_to("manage_content.php");
-			}else{
-				$_SESSION["message"] = "failed.";
-				redirect_to("new_subject.php");
-			}
-			
-		}	
-    }else{
-        //redirect_to("https://www.google.se");
-        redirect_to("heatmap.php");
-    }
-	*/
+
+	$query2 = "SELECT count(longitude) ";
+	$query2.= "FROM node" ;
+	$count = mysqli_query($connection, $query2);
+	if(!$count)
+		die("Count query failed");
+	$count = mysqli_fetch_row($count)
 ?>
 var m,n;
 var data = <?php echo json_encode( $data ) ?>;
 var NumofRows = <?php echo json_encode( $count ) ?>; 
+var Data = [];
 
-if (NumofRows == 0){
-	alert("Sorry! There is no data during your selected time.");
-	window.location.href = "t_create_heatmap.php";
-}else{
-	var Data = [];
-	for (m=0; m < NumofRows; m++){
+ for (m=0; m < NumofRows; m++){
 		 Data.push(new google.maps.LatLng(data[m][4], data[m][3]));
-	}
-}
+ }
+
 
 function initialize() {
   var markers = [];	
   var mapOptions = {
     zoom: 13,
-    center: new google.maps.LatLng(data[0][4], data[0][3]),
+    center: new google.maps.LatLng(59.2911, 17.9327),
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
 
