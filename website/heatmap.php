@@ -21,14 +21,19 @@ var map, pointarray, heatmap;
 	$connection = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname);
 
 	if(mysqli_connect_errno()){
-		die("Database connenction failed:".
+		die("Database connection failed:".
 		mysqli_connect_error().
 		"(".mysqli_connect_errno().")"
 		);
 	}
 		
 	 if($_POST['date']!='0'&&$_POST['time']!='0'){ 
-        echo "both OK";
+        $date = $_POST["date"];
+		$time = (int)$_POST['time'];
+		$time_from = $time - 1;		
+		$query = "SELECT * ";
+		$query.= "FROM node ";
+		$query.= "WHERE date(time)='{$date}' AND time(time)<'{$time}:00:00' && time(time)>'{$time_from}:00:00';";
 	 }elseif($_POST['date']!='0'){
 			$date = $_POST["date"];		
 			$query = "SELECT * ";
@@ -42,8 +47,6 @@ var map, pointarray, heatmap;
 			$query.= "FROM node ";
 			$query.= "WHERE time(time)<'{$time}:00:00' && time(time)>'{$time_from}:00:00';";
 		
-	 }else{
-		 echo "Nothing";
 	 }
 	 
 	$result = mysqli_query($connection, $query);
@@ -56,45 +59,6 @@ var map, pointarray, heatmap;
 		$data[$i] = $row;
 		$i++;
 	}	 
-	 /*
-	 if(isset($_POST['date'])||isset($_POST['time'])){ 
-        
-		
-        //$menu_name = mysqli_real_escape_string($connection, $_POST["menu_name"]);
-		if(isset($_POST['time'])){
-			$date = $_POST["date"];		
-			$query = "SELECT * ";
-			$query.= "FROM node ";
-			$query.= "WHERE date(time)='{$date}';";
-			
-			$result = mysqli_query($connection, $query);
-			
-			if(!$result)
-				die("Database query failed");
-			
-			$data = array();
-			$i = 0;
-			
-			while($row = mysqli_fetch_array($result)){
-				$data[$i] = $row;
-				$i++;
-			}
-			$count = mysqli_num_rows($result);
-		
-			if($result){
-				$_SESSION["message"] = "succeed.";
-				redirect_to("manage_content.php");
-			}else{
-				$_SESSION["message"] = "failed.";
-				redirect_to("new_subject.php");
-			}
-			
-		}	
-    }else{
-        //redirect_to("https://www.google.se");
-        redirect_to("heatmap.php");
-    }
-	*/
 ?>
 var m,n;
 var data = <?php echo json_encode( $data ) ?>;
@@ -102,7 +66,7 @@ var NumofRows = <?php echo json_encode( $count ) ?>;
 
 if (NumofRows == 0){
 	alert("Sorry! There is no data during your selected time.");
-	window.location.href = "t_create_heatmap.php";
+	window.location.href = "create_heatmap.php";
 }else{
 	var Data = [];
 	for (m=0; m < NumofRows; m++){
@@ -113,7 +77,8 @@ if (NumofRows == 0){
 function initialize() {
   var markers = [];	
   var mapOptions = {
-    zoom: 13,
+    zoom: 14,
+	//center: new google.maps.LatLng(59, 18),
     center: new google.maps.LatLng(data[0][4], data[0][3]),
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
@@ -232,7 +197,7 @@ google.maps.event.addDomListener(window, 'load', initialize);
 			<ul id="menu">
 				<li ><a href="index.html"><span><span>About</span></span></a></li>
 				<li><a href="bicycling_route.html"><span><span>Bicycling Route</span></span></a></li>
-				<li id="menu_active" class="end"><a href="heatmap.php"><span><span>Heatmap</span></span></a></li>
+				<li id="menu_active" class="end"><a href="create_heatmap.php"><span><span>Heatmap</span></span></a></li>
 			</ul>
 		</nav>
 	</header>

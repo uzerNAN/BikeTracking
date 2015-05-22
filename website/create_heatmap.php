@@ -28,6 +28,15 @@
 	
 ?>
 
+	function checkValidation(){
+
+		
+		if(document.getElementById("form").time.value=="0" && document.getElementById("form").date.value=="0" ){
+			 alert("Sorry, you have to select an option");
+			return false;
+		}
+
+	}
 </script>
 </head>
 <body id="page1">
@@ -47,7 +56,7 @@
 	</header>
 <!-- / header -->
 			
-			<form action="t0_heatmap.php" method="post" class="centered">
+			<form id="form" action="heatmap.php" onsubmit="return checkValidation();" method="post" class="centered">
 			<h2>Select a date:
 		      <select  name="date" >
 			  <option value="0"></option>
