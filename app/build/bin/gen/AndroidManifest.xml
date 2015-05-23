@@ -46,38 +46,15 @@
 		android:theme="@style/AppTheme"
 		android:configChanges="keyboardHidden|orientation|screenSize">
 
-		<receiver
-			android:name="uppsala.biketracking.WakefulReceiver"
-			android:label="@string/app_name"
-			android:enabled="true">
-
-			<intent-filter>
-
-				<action
-					android:name="SERVICE_DATA"/>
-
-				<action
-					android:name="DATA_UPLOADED"/>
-
-				<action
-					android:name="FILE_ERROR"/>
-
-				<action
-					android:name="UPLOAD_ERROR"/>
-
-			</intent-filter>
-
-		</receiver>
-
 		<service
-			android:name="uppsala.biketracking.WakefulService"
+			android:name="uppsala.biketracking.MainService"
 			android:exported="false"
 			android:enabled="true">
 
 			<intent-filter>
 
 				<action
-					android:name="uppsala.biketracking.WakefulService"/>
+					android:name="uppsala.biketracking.MainService"/>
 
 				<action
 					android:name="ACTIVITY_DATA"/>
@@ -101,7 +78,7 @@
 			android:value="@string/AIzaSyD5Juo350_K2EEZcmijYvL40MHRaZVA2_A"/>
 
 		<activity
-			android:name=".Tracking"
+			android:name=".MainActivity"
 			android:label="@string/title_activity_tracking">
 
 			<intent-filter>

@@ -61,6 +61,8 @@
       <sourceFolder url="file://$MODULE_DIR$/src/androidTest/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTest/jni" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTest/rs" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/build/bin" />
+      <excludeFolder url="file://$MODULE_DIR$/build/gen" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/assets" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/bundles" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/classes" />
@@ -88,8 +90,8 @@
     <orderEntry type="library" exported="" name="play-services-plus-7.0.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-cast-7.0.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-maps-7.0.0" level="project" />
-    <orderEntry type="library" exported="" name="support-v4-22.0.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-base-7.0.0" level="project" />
+    <orderEntry type="library" exported="" name="support-v4-22.0.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-fitness-7.0.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-panorama-7.0.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-safetynet-7.0.0" level="project" />

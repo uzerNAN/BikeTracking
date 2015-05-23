@@ -50,7 +50,7 @@ public class CollectedData
 		return iter;
 	}
 	public boolean isOnline(){
-		return WakefulService.isOnline(this.context);
+		return MainService.isOnline(this.context);
 	}
 	public void resetData(){
 		this.removeLastData(this.size);

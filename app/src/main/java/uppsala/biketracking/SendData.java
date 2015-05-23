@@ -57,23 +57,23 @@ public class SendData implements Runnable
 			if(!this.output.equals("")){
 				Log.i("UPLOAD", "IS SUCCESSFUL");
 				//this.output = "SUCCESS";
-				if(WakefulService.mainService != null){
-					WakefulService.mainService.successfullyUploaded();
+				if(MainService.active){
+					MainService.successfullyUploaded();
 				}
 			}
 			else{
 				Log.i("UPLOAD", "FAILED");
 				//this.output = "FAIL";
-				if(WakefulService.mainService != null){
-					WakefulService.mainService.failedToUpload();
+				if(MainService.active){
+					MainService.failedToUpload();
 				}
 			}
 			
 		}
 		catch(Exception e) {
 			Log.i("UploadException",e.toString());
-			if(WakefulService.mainService != null){
-				WakefulService.mainService.failedToUpload();
+			if(MainService.active){
+				MainService.failedToUpload();
 			}
 		}
 		this.setUploading(false);
