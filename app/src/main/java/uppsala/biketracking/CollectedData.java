@@ -88,77 +88,6 @@ public class CollectedData
 		return success;
 	}
 	
-	/*public void setIdSequence(int newsid, int index){
-		int sid = newsid;
-		long prvTime = 0;
-		if(index < this.size){
-			for(int i = index; i < this.size; i++){
-				if(Long.compare(prvTime, 0) > 0 && Long.compare((this.data.get(i).getTime()-prvTime), WakefulService.sessionTimeout) > 0){
-					sid++;
-				}
-				prvTime = this.data.get(i).getTime();
-				this.data.get(i).setSID(sid);
-			}
-		}
-	}
-	
-	private void setSpeed(){
-		Location l1 = new Location("previous location");
-		l1.setLatitude(this.data.get(0).getLatitude());
-		l1.setLongitude(this.data.get(0).getLongitude());
-		long time = this.data.get(0).getTime();
-		Location l2 = new Location("current location");
-		for(int i = 1; i < this.size; i++){
-			l2.setLatitude(this.data.get(i).getLatitude());
-			l2.setLongitude(this.data.get(i).getLongitude());
-			this.data.get(i).setSpeed(1000*l2.distanceTo(l1)/(this.data.get(i).getTime()-time));
-			l1.set(l2);
-			time = this.data.get(i).getTime();
-		}
-	}
-	
-	public boolean exportFile(String path){
-		boolean imprt = true;
-		//this.setIdSequence(0,0);
-		//this.setSpeed();
-		File updateLog = new File(path);
-		if(!updateLog.exists()){
-			try{
-				updateLog.createNewFile();
-			}
-			catch(IOException e){
-				imprt = false;
-				e.printStackTrace();
-			}
-		}
-		if(imprt){
-			try{
-				FileWriter fil = new FileWriter(updateLog);
-				//fil.write(this.dataToString());
-				fil.write("");
-				fil.close();
-				BufferedWriter buf = new BufferedWriter(new FileWriter(updateLog, true));
-				for(int i = 0; i < this.size; i++){
-					buf.append("SID "+this.data.get(i).getSID()
-							 +"|LATITUDE "+this.data.get(i).getLatitude()
-							 +"|LONGITUDE "+this.data.get(i).getLongitude()
-							 +"|TIME "+this.data.get(i).getTime()
-							 +"|SPEED "+this.data.get(i).getSpeed()
-							 +"|ACCURACY "+this.data.get(i).getAccuracy());
-					buf.newLine();
-				}
-				//buf.append("UPLOADED");
-				//buf.newLine();
-				buf.close();
-			}
-			catch(IOException e){
-				imprt = false;
-				e.printStackTrace();
-			}
-		}
-		return imprt;
-	}*/
-	
 	private void removeLastData(int last){
 		if(last > 0 && !this.dataIsEmpty() && this.size >= last){
 			boolean finalization = true;
@@ -264,4 +193,76 @@ public class CollectedData
 			e.printStackTrace();
 		}
 	}
+	
+	
+	/*public void setIdSequence(int newsid, int index){
+		int sid = newsid;
+		long prvTime = 0;
+		if(index < this.size){
+			for(int i = index; i < this.size; i++){
+				if(Long.compare(prvTime, 0) > 0 && Long.compare((this.data.get(i).getTime()-prvTime), WakefulService.sessionTimeout) > 0){
+					sid++;
+				}
+				prvTime = this.data.get(i).getTime();
+				this.data.get(i).setSID(sid);
+			}
+		}
+	}
+	
+	private void setSpeed(){
+		Location l1 = new Location("previous location");
+		l1.setLatitude(this.data.get(0).getLatitude());
+		l1.setLongitude(this.data.get(0).getLongitude());
+		long time = this.data.get(0).getTime();
+		Location l2 = new Location("current location");
+		for(int i = 1; i < this.size; i++){
+			l2.setLatitude(this.data.get(i).getLatitude());
+			l2.setLongitude(this.data.get(i).getLongitude());
+			this.data.get(i).setSpeed(1000*l2.distanceTo(l1)/(this.data.get(i).getTime()-time));
+			l1.set(l2);
+			time = this.data.get(i).getTime();
+		}
+	}
+	
+	public boolean exportFile(String path){
+		boolean imprt = true;
+		//this.setIdSequence(0,0);
+		//this.setSpeed();
+		File updateLog = new File(path);
+		if(!updateLog.exists()){
+			try{
+				updateLog.createNewFile();
+			}
+			catch(IOException e){
+				imprt = false;
+				e.printStackTrace();
+			}
+		}
+		if(imprt){
+			try{
+				FileWriter fil = new FileWriter(updateLog);
+				//fil.write(this.dataToString());
+				fil.write("");
+				fil.close();
+				BufferedWriter buf = new BufferedWriter(new FileWriter(updateLog, true));
+				for(int i = 0; i < this.size; i++){
+					buf.append("SID "+this.data.get(i).getSID()
+							 +"|LATITUDE "+this.data.get(i).getLatitude()
+							 +"|LONGITUDE "+this.data.get(i).getLongitude()
+							 +"|TIME "+this.data.get(i).getTime()
+							 +"|SPEED "+this.data.get(i).getSpeed()
+							 +"|ACCURACY "+this.data.get(i).getAccuracy());
+					buf.newLine();
+				}
+				//buf.append("UPLOADED");
+				//buf.newLine();
+				buf.close();
+			}
+			catch(IOException e){
+				imprt = false;
+				e.printStackTrace();
+			}
+		}
+		return imprt;
+	}*/
 }

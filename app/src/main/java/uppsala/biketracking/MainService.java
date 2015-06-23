@@ -39,7 +39,7 @@ public class MainService extends Service implements com.google.android.gms.locat
 	public static boolean active = false;
 	private PendingIntent penInt;
 	private LocationRequest locReq;
-	private int updateTime = 15, cycle = 0;
+	private int updateTime = 15;
 	private Location lLoc;
 	private boolean destroy = false, record = false;
 	private GoogleApiClient mClient;
@@ -230,7 +230,9 @@ public class MainService extends Service implements com.google.android.gms.locat
 				this.sendBroadcast(new Intent("FILE_PERMISSION").setAction("FILE_ERROR"));
 			}
 			else{
-				this.data().add(currSID, p1.getLatitude(), p1.getLongitude(), p1.getTime(), speed, p1.getAccuracy());
+				if(!this.data.dataIsEmpty()){
+					this.data().add(currSID, p1.getLatitude(), p1.getLongitude(), p1.getTime(), speed, p1.getAccuracy());
+				}
 			}
 			
 			lLoc = p1;
@@ -266,56 +268,47 @@ public class MainService extends Service implements com.google.android.gms.locat
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId)
 	{
-		if (ActivityRecognitionResult.hasResult(intent)){
-			DetectedActivity probableActivity = ActivityRecognitionResult.extractResult(intent).getMostProbableActivity();
-			int confidence = probableActivity.getConfidence();
-			int type = probableActivity.getType();
+		if(intent != null){
+			if (ActivityRecognitionResult.hasResult(intent)){
+				DetectedActivity probableActivity = ActivityRecognitionResult.extractResult(intent).getMostProbableActivity();
+				int confidence = probableActivity.getConfidence();
+				int type = probableActivity.getType();
 
-			
-			if(MainActivity.active){
-				this.sendBroadcast(new Intent("SERVICE_UPDATE")
-							  .setAction("SERVICE_DATA")
-							  .putExtra("ACTIVITY_NAME", this.getActivityName(type))
-							  .putExtra("ACTIVITY_CONFIDENCE", confidence));
-			}
-			
-			if(type == DetectedActivity.ON_BICYCLE && !this.record){
-				this.record = true;
-				this.requestLocationUpdates();
-				if(this.updateTime > 15){
-					this.removeRecognitionUpdates();
-					this.updateTime = 15;
-					this.cycle = 0;
-					this.requestRecognitionUpdates(this.updateTime);
+				
+				if(MainActivity.active){
+					this.sendBroadcast(new Intent("SERVICE_UPDATE")
+								  .setAction("SERVICE_DATA")
+								  .putExtra("ACTIVITY_NAME", this.getActivityName(type))
+								  .putExtra("ACTIVITY_CONFIDENCE", confidence));
 				}
-			}
-			else if(this.record && type != DetectedActivity.ON_BICYCLE){
-				this.record = false;
-				this.removeLocationUpdates();
-			}
-			
-			if(!this.record){
-				if(this.cycle > 5){
-					if(this.updateTime<60){
+				
+				if(type == DetectedActivity.ON_BICYCLE && !this.record){
+					this.record = true;
+					this.requestLocationUpdates();
+					if(this.updateTime > 15){
 						this.removeRecognitionUpdates();
-						this.updateTime+=5; this.cycle=0;
+						this.updateTime = 15;
+						//this.cycle = 0;
 						this.requestRecognitionUpdates(this.updateTime);
+					}
+				}
+				else if(this.record && type != DetectedActivity.ON_BICYCLE){
+					this.record = false;
+					this.removeLocationUpdates();
+				}
+				
+				if(!this.record){
+					if(this.updateTime<90){
+							this.removeRecognitionUpdates();
+							this.updateTime+=5;
+							this.requestRecognitionUpdates(this.updateTime);
 					}
 					if(!this.data().uploadData() && !this.data().dataIsEmpty()){
 						this.data().resetData();
 					}
 				}
-				else if(this.cycle<=5){
-					this.cycle++;
-				}
 			}
-		}
-        if(intent != null){
-            /*if(intent.getAction().equals("SERVICE_START")){
-                this.active = true;
-                Log.i("SERVICE START", "GOT SERVICE_START ON START");
-            }
-            else*/ if(intent.getAction().equals("SERVICE_STOP")){
+			else if(intent.getAction().equals("SERVICE_STOP")){
                 this.destroy = true;
                 this.onDestroy();
             }

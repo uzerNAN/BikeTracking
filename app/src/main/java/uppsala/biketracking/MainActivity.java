@@ -65,7 +65,6 @@ public class MainActivity extends FragmentActivity
         this.coordinates = (LinearLayout) this.findViewById(R.id.coordinates);
         this.icon = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
         this.icon.setPixel(0, 0, Color.argb(Color.alpha(R.color.transparent), Color.red(R.color.transparent), Color.green(R.color.transparent), Color.blue(R.color.transparent)));
-        this.setUpMapIfNeeded();
         this.receiver = new BroadcastReceiver() {
             @Override
             public void onReceive (Context context, Intent intent){
@@ -74,6 +73,7 @@ public class MainActivity extends FragmentActivity
                         case ("DATA_UPLOADED"):
                             Toast.makeText(context, "Data was successfully uploaded to server", Toast.LENGTH_LONG).show();
                             break;
+							
                         case ("UPLOAD_ERROR"):
                             Toast.makeText(context, "UNABLE TO UPLOAD DATA", Toast.LENGTH_LONG).show();
                             break;
@@ -86,6 +86,7 @@ public class MainActivity extends FragmentActivity
                             Bundle data = intent.getExtras();
                             MainActivity.this.updateActivity(data.getString("ACTIVITY_NAME"), data.getInt("ACTIVITY_CONFIDENCE"));
                             break;
+							
                         default:
                             break;
                     }
@@ -164,7 +165,7 @@ public class MainActivity extends FragmentActivity
 		LatLng latLng = new LatLng(latitude, longitude);
 		if(this.mMap != null){
 			this.mMarker = this.mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromBitmap(icon)));
-			this.updateMarkerTitle(this.aName+" ["+this.aConfidence+"%]");
+			this.updateActivity(this.aName, this.aConfidence);
 			// Showing the current location in Google Map
 			this.mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 			// Zoom in the Google Map
