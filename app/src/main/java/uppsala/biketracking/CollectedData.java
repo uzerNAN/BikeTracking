@@ -26,7 +26,7 @@ public class CollectedData
 		}
 		return uploading;
 	}
-	public boolean dataIsEmpty(){
+	public boolean isEmpty(){
 		return this.size == 0;
 	}
 	public void add(int id, double latitude, double longitude, long time, float speed, float accuracy){
@@ -49,32 +49,32 @@ public class CollectedData
 		}
 		return iter;
 	}
-	public boolean isOnline(){
-		return WakefulService.isOnline(this.context);
-	}
+	//public boolean isOnline(){
+	//	return RecordLocationService.isOnline(this.context);
+	//}
 	public void resetData(){
 		this.removeLastData(this.size);
 		Log.i("ResetUpdate","UPDATE RESETED");
 	}
 	public int getLastSID(){
 		int sid = 0;
-		if(!this.dataIsEmpty()){
+		if(!this.isEmpty()){
 			sid = this.data.get(this.size-1).getSID();
 		}
 		return sid;
 	}
 	public long getLastTime(){
 		long time = 0;
-		if(!this.dataIsEmpty()){
+		if(!this.isEmpty()){
 			time = this.data.get(this.size-1).getTime();
 		}
 		return time;
 	}
 	public boolean uploadData(){
 		boolean success = false;
-		if(!this.uploading() && this.isOnline()){
+		if(!this.uploading()){
 			//if(this.dataIsEmpty()) { this.importFile(WakefulService.filePath); }
-			if(!this.dataIsEmpty()){
+			if(!this.isEmpty()){
 				this.send.setInput(this.dataToString());
 				new Thread(this.send).start();
 				Log.i("UploadData","THREAD STARTED");
@@ -83,10 +83,118 @@ public class CollectedData
 			}
 		}
 		else{
-			Log.i("UploadData","UNABLE TO START THREAD: isOnline="+this.isOnline()+", data.size="+this.size+", uploading="+this.uploading());
+			Log.i("UploadData","UNABLE TO START THREAD: data.size="+this.size+", uploading="+this.uploading());
 		}
 		return success;
 	}
+	
+	private void removeLastData(int last){
+		if(last > 0 && !this.isEmpty() && this.size >= last){
+			boolean finalization = true;
+			for(int i = this.size-1; i >= (this.size-last); i--){
+				if(finalization){
+					finalization = this.data.get(i).finalization();
+					if(!finalization){
+						Log.i("RemoveLastUpdate","UNABLE TO FINALIZE DATA OBJECT, STOPPING FINALIZING, ONLY REMOVE FROM LISTS");
+					}
+				}
+				this.data.remove(i);
+			}
+			this.size -= last;
+			Log.i("RemoveLastUpdate","SUCCESSFULLY REMOVED "+last+" LAST OBJECTS FROM LISTS; finalization="+finalization);
+		}
+		else{
+			Log.i("RemoveLastUpdate","FAIL: last="+last+", data.size="+this.size);
+		}
+	}
+	
+	public boolean importFile(String path){
+		boolean imprt = true; int counter = 0;
+		File updateLog = new File(path);
+		if(updateLog.exists()){
+			try{
+				BufferedReader buf = new BufferedReader(new FileReader(updateLog));
+				String line;
+				String[] splitLine, splitSID, splitTime, splitSpeed, splitAccuracy, splitLatitude, splitLongitude;
+				while((line = buf.readLine()) != null){
+					if(line.matches("[A-Z0-9.| ]*")){
+						splitLine = line.split("\\|");
+						splitSID = splitLine[0].split(" ");
+						splitLatitude = splitLine[1].split(" ");
+						splitLongitude = splitLine[2].split(" ");
+						splitTime = splitLine[3].split(" ");
+						splitSpeed = splitLine[4].split(" ");
+						splitAccuracy = splitLine[5].split(" ");
+						if(splitSID[0].equals("SID")
+						&& splitLatitude[0].equals("LATITUDE") 
+						&& splitLongitude[0].equals("LONGITUDE") 
+						&& splitTime[0].equals("TIME") 
+						&& splitSpeed[0].equals("SPEED")
+						&& splitAccuracy[0].equals("ACCURACY")){
+							this.add(Integer.parseInt(splitSID[1]), Double.parseDouble(splitLatitude[1]), Double.parseDouble(splitLongitude[1]), Long.parseLong(splitTime[1]), Float.parseFloat(splitSpeed[1]), Float.parseFloat(splitAccuracy[1]));
+							counter++;
+						}
+						else{
+							Log.i("ImportActivityFile","FILE LINE HAS DIFFERENT CONTENT");
+							imprt = false;
+							break;
+						}
+					}
+					else{
+						Log.i("ImportActivityFile","UNKNOWN LINE: "+line);
+						imprt = false;
+						break;
+					}
+				}
+				buf.close();
+				Log.i("ImportActivityFile","IMPORTED "+counter+" LINES");
+			}
+			catch(ArrayIndexOutOfBoundsException e){
+				imprt = false;
+				e.printStackTrace();
+			}
+			catch(IOException e){
+				imprt = false;
+				e.printStackTrace();
+			}
+			catch(Exception e){
+				imprt = false;
+				e.printStackTrace();
+			}
+		}
+		if(!imprt){
+			this.removeLastData(counter);
+		}
+		Log.i("TO STRING", this.dataToString());
+		Log.i("ImportActivityFile", "imprt="+imprt);
+		return imprt;
+	}
+	public String toString(){
+		return "{\"data\":"+this.dataToString()+"}";
+	}
+	public String dataToString(){
+		String result = "[";
+		if(this.size > 0){
+			for(int i = 0; i < this.size; i++){
+				result += this.data.get(i).toString();
+				if(i+1 < this.size){
+					result += ",";
+				}
+			}
+		}
+		result += "]";
+		return result;
+	}
+	public void finalization(){
+		this.resetData();
+		try{
+			this.finalize();
+		}
+		catch(java.lang.Throwable e){
+			e.printStackTrace();
+		}
+	}
+	
 	
 	/*public void setIdSequence(int newsid, int index){
 		int sid = newsid;
@@ -158,110 +266,4 @@ public class CollectedData
 		}
 		return imprt;
 	}*/
-	
-	private void removeLastData(int last){
-		if(last > 0 && !this.dataIsEmpty() && this.size >= last){
-			boolean finalization = true;
-			for(int i = this.size-1; i >= (this.size-last); i--){
-				if(finalization){
-					finalization = this.data.get(i).finalization();
-					if(!finalization){
-						Log.i("RemoveLastUpdate","UNABLE TO FINALIZE DATA OBJECT, STOPPING FINALIZING, ONLY REMOVE FROM LISTS");
-					}
-				}
-				this.data.remove(i);
-			}
-			this.size -= last;
-			Log.i("RemoveLastUpdate","SUCCESSFULLY REMOVED "+last+" LAST OBJECTS FROM LISTS; finalization="+finalization);
-		}
-		else{
-			Log.i("RemoveLastUpdate","FAIL: last="+last+", data.size="+this.size);
-		}
-	}
-	
-	public boolean importFile(String path){
-		boolean imprt = true; int counter = 0;
-		File updateLog = new File(path);
-		if(updateLog.exists()){
-			try{
-				BufferedReader buf = new BufferedReader(new FileReader(updateLog));
-				String line;
-				String[] splitLine, splitSID, splitTime, splitSpeed, splitAccuracy, splitLatitude, splitLongitude;
-				while((line = buf.readLine()) != null){
-					if(line.matches("[A-Z0-9.| ]*")){
-						splitLine = line.split("\\|");
-						splitSID = splitLine[0].split(" ");
-						splitLatitude = splitLine[1].split(" ");
-						splitLongitude = splitLine[2].split(" ");
-						splitTime = splitLine[3].split(" ");
-						splitSpeed = splitLine[4].split(" ");
-						splitAccuracy = splitLine[5].split(" ");
-						if(splitSID[0].equals("SID")
-						&& splitLatitude[0].equals("LATITUDE") 
-						&& splitLongitude[0].equals("LONGITUDE") 
-						&& splitTime[0].equals("TIME") 
-						&& splitSpeed[0].equals("SPEED")
-						&& splitAccuracy[0].equals("ACCURACY")){
-							this.add(Integer.parseInt(splitSID[1]), Double.parseDouble(splitLatitude[1]), Double.parseDouble(splitLongitude[1]), Long.parseLong(splitTime[1]), Float.parseFloat(splitSpeed[1]), Float.parseFloat(splitAccuracy[1]));
-							counter++;
-						}
-						else{
-							Log.i("ImportActivityFile","FILE LINE HAS DIFFERENT CONTENT");
-							imprt = false;
-							break;
-						}
-					}
-					else{
-						Log.i("ImportActivityFile","UNKNOWN LINE: "+line);
-						imprt = false;
-						break;
-					}
-				}
-				buf.close();
-			}
-			catch(ArrayIndexOutOfBoundsException e){
-				imprt = false;
-				e.printStackTrace();
-			}
-			catch(IOException e){
-				imprt = false;
-				e.printStackTrace();
-			}
-			catch(Exception e){
-				imprt = false;
-				e.printStackTrace();
-			}
-		}
-		if(!imprt){
-			this.removeLastData(counter);
-		}
-		//Log.i("TO STRING", this.dataToString());
-		Log.i("ImportActivityFile", "imprt="+imprt);
-		return imprt;
-	}
-	public String toString(){
-		return "{\"data\":"+this.dataToString()+"}";
-	}
-	public String dataToString(){
-		String result = "[";
-		if(this.size > 0){
-			for(int i = 0; i < this.size; i++){
-				result += this.data.get(i).toString();
-				if(i+1 < this.size){
-					result += ",";
-				}
-			}
-		}
-		result += "]";
-		return result;
-	}
-	public void finalization(){
-		this.resetData();
-		try{
-			this.finalize();
-		}
-		catch(java.lang.Throwable e){
-			e.printStackTrace();
-		}
-	}
 }
