@@ -2207,9 +2207,8 @@ containing a value of this type.
         public static final int abc_simple_dropdown_hint=0x7f040016;
         public static final int activity_tracking=0x7f040017;
         public static final int list_item=0x7f040018;
-        public static final int main=0x7f040019;
-        public static final int support_simple_spinner_dropdown_item=0x7f04001a;
-        public static final int titlebar=0x7f04001b;
+        public static final int support_simple_spinner_dropdown_item=0x7f040019;
+        public static final int titlebar=0x7f04001a;
     }
     public static final class mipmap {
         public static final int ic_launcher=0x7f030000;

@@ -22,6 +22,11 @@
     <color name="background_floating_material_light">#ffeeeeee</color>
     <color name="background_material_dark">#ff303030</color>
     <color name="background_material_light">#ffeeeeee</color>
+    <!-- From: file:/C:/Users/Unknown/AndroidStudioProjects/BikeTracking/app/src/main/res/values/color.xml -->
+    <eat-comment/>
+    <color name="black">#000000</color>
+    <!-- From: file:/C:/Users/Unknown/AndroidStudioProjects/BikeTracking/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.0.0/res/values/values.xml -->
+    <eat-comment/>
     <color name="bright_foreground_disabled_material_dark">#80ffffff</color>
     <color name="bright_foreground_disabled_material_light">#80000000</color>
     <color name="bright_foreground_inverse_material_dark">@color/bright_foreground_material_light</color>
@@ -75,6 +80,9 @@
     <color name="secondary_text_disabled_material_light">#24000000</color>
     <color name="switch_thumb_normal_material_dark">#ffbdbdbd</color>
     <color name="switch_thumb_normal_material_light">#fff1f1f1</color>
+    <!-- From: file:/C:/Users/Unknown/AndroidStudioProjects/BikeTracking/app/src/main/res/values/color.xml -->
+    <eat-comment/>
+    <color name="transparent">#00000000</color>
     <!-- From: file:/C:/Users/Unknown/AndroidStudioProjects/BikeTracking/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-wallet/7.0.0/res/values/wallet_colors.xml -->
     <eat-comment/>
     <color name="wallet_bright_foreground_disabled_holo_light">#ffb2b2b2</color>
@@ -90,6 +98,9 @@
     <color name="wallet_hint_foreground_holo_light">#808080</color>
     <color name="wallet_holo_blue_light">#ff33b5e5</color>
     <color name="wallet_link_text_light">#0000ee</color>
+    <!-- From: file:/C:/Users/Unknown/AndroidStudioProjects/BikeTracking/app/src/main/res/values/color.xml -->
+    <eat-comment/>
+    <color name="white">#FFFFFF</color>
     <declare-styleable name="ActionBar"><attr name="navigationMode"><enum name="normal" value="0"/><enum name="listMode" value="1"/><enum name="tabMode" value="2"/></attr><attr name="displayOptions"><flag name="none" value="0"/><flag name="useLogo" value="0x1"/><flag name="showHome" value="0x2"/><flag name="homeAsUp" value="0x4"/><flag name="showTitle" value="0x8"/><flag name="showCustom" value="0x10"/><flag name="disableHome" value="0x20"/></attr><attr name="title"/><attr format="string" name="subtitle"/><attr format="reference" name="titleTextStyle"/><attr format="reference" name="subtitleTextStyle"/><attr format="reference" name="icon"/><attr format="reference" name="logo"/><attr format="reference" name="divider"/><attr format="reference" name="background"/><attr format="reference|color" name="backgroundStacked"/><attr format="reference|color" name="backgroundSplit"/><attr format="reference" name="customNavigationLayout"/><attr name="height"/><attr format="reference" name="homeLayout"/><attr format="reference" name="progressBarStyle"/><attr format="reference" name="indeterminateProgressStyle"/><attr format="dimension" name="progressBarPadding"/><attr name="homeAsUpIndicator"/><attr format="dimension" name="itemPadding"/><attr format="boolean" name="hideOnContentScroll"/><attr format="dimension" name="contentInsetStart"/><attr format="dimension" name="contentInsetEnd"/><attr format="dimension" name="contentInsetLeft"/><attr format="dimension" name="contentInsetRight"/><attr format="dimension" name="elevation"/><attr format="reference" name="popupTheme"/></declare-styleable>
     <declare-styleable name="ActionBarLayout"><attr name="android:layout_gravity"/></declare-styleable>
     <declare-styleable name="ActionMenuItemView"><attr name="android:minWidth"/></declare-styleable>
@@ -185,6 +196,11 @@
     <!-- From: file:/C:/Users/Unknown/AndroidStudioProjects/BikeTracking/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/7.0.0/res/values/version.xml -->
     <eat-comment/>
     <integer name="google_play_services_version">7095000</integer>
+    <!-- From: file:/C:/Users/Unknown/AndroidStudioProjects/BikeTracking/app/src/main/res/values/google_maps_api.xml -->
+    <eat-comment/>
+    <string name="AIzaSyD5Juo350_K2EEZcmijYvL40MHRaZVA2_A" templateMergeStrategy="preserve" translatable="false">
+		AIzaSyD5Juo350_K2EEZcmijYvL40MHRaZVA2_A
+	</string>
     <!-- From: file:/C:/Users/Unknown/AndroidStudioProjects/BikeTracking/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.0.0/res/values/values.xml -->
     <eat-comment/>
     <string name="abc_action_bar_home_description">Navigate home</string>
@@ -253,13 +269,17 @@ available. Please contact the developer for assistance.</string>
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
         YOUR_KEY_HERE
     </string>
+    <!-- From: file:/C:/Users/Unknown/AndroidStudioProjects/BikeTracking/app/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="hello_world">Hello fellow</string>
+    <string name="local_service_started">Backround service is up</string>
     <!-- From: file:/C:/Users/Unknown/AndroidStudioProjects/BikeTracking/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-ads/7.0.0/res/values/admob_strings.xml -->
     <eat-comment/>
     <string name="store_picture_message">"Allow Ad to store image in Picture gallery?"</string>
     <string name="store_picture_title">Save image</string>
     <!-- From: file:/C:/Users/Unknown/AndroidStudioProjects/BikeTracking/app/src/main/res/values/strings.xml -->
     <eat-comment/>
-    <string name="title_activity_tracking">Map</string>
+    <string name="title_activity_tracking">Bike Tracking Map</string>
     <!-- From: file:/C:/Users/Unknown/AndroidStudioProjects/BikeTracking/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-wallet/7.0.0/res/values/wallet_strings.xml -->
     <eat-comment/>
     <string name="wallet_buy_button_place_holder" translation_description="Text on a button that allows a user to make a payment with Google Wallet [CHAR LIMIT=30]">Buy with Google</string>
@@ -268,7 +288,7 @@ available. Please contact the developer for assistance.</string>
     <style name="Animation.AppCompat.DropDownUp" parent="Base.Animation.AppCompat.DropDownUp"/>
     <!-- From: file:/C:/Users/Unknown/AndroidStudioProjects/BikeTracking/app/src/main/res/values/styles.xml -->
     <eat-comment/>
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="android:Theme">
         <!-- Customize your theme here. -->
     </style>
     <!-- From: file:/C:/Users/Unknown/AndroidStudioProjects/BikeTracking/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.0.0/res/values/values.xml -->
