@@ -33,17 +33,14 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	//private CollectedData data;
     private BroadcastReceiver receiver;
     private IntentFilter recFilter;
-	private GoogleApiClient mClient;
 	//private AutoCompleteTextView autoCompView;
 
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent i = new Intent(this, RecordLocationService.class);
-        if (!RecordLocationService.active) {
-            i.setAction("SERVICE_START");
-            this.startService(i);
+        if (!ApiService.rl_is_active) {
+            this.startService(new Intent(this, ApiService.class).setAction("START_RL"));
         }
         final boolean customTitleSupported = this.requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 
@@ -90,7 +87,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         this.recFilter.addAction("UPLOAD_ERROR");
         this.recFilter.addAction("FILE_ERROR");
         this.recFilter.addAction("SERVICE_DATA");
-		connectGoogleApiClient();
 		this.startRecognitionUpdates();
     }
 
@@ -101,20 +97,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		super.onStop();
 		this.mClient.disconnect();
 	}
-	
-	protected synchronized void connectGoogleApiClient() {
-		if(this.mClient == null){
-			this.mClient = new GoogleApiClient.Builder(this)
-				.addApi(LocationServices.API)
-				.addConnectionCallbacks(this)
-				.addOnConnectionFailedListener(this)
-				.build();
-		}
-		if(!this.mClient.isConnected() && !this.mClient.isConnecting()){
-			this.mClient.connect();
-		}
-	}
-	private LocationRequest locReq;
 	
 	@Override
 	public void onConnected(Bundle connectionHint){
@@ -132,26 +114,26 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	}
 	
 	private void startLocationUpdates(){
-		if(this.mClient.isConnected()){
-			LocationServices.FusedLocationApi.requestLocationUpdates(this.mClient, this.locReq, this);
+		if(!ApiService.lu_is_active){
+			this.startService(new Intent(this, ApiService.class).setAction("START_LU"));
 		}
 	}
 	
-	private void startRecognitionUpdates(){
-		if(!ActivityRecognitionService.active){
-			this.startService((new Intent(this, ActivityRecognitionService.class).setAction("START_ACTIVITY_RECOGNITION")));
+	private void startActivityRecognition(){
+		if(!ApiService.ar_is_active){
+			this.startService((new Intent(this, ApiService.class).setAction("START_AR")));
 		}
 	}
 	
-	private void stopRecognitionUpdates(){
-		if(ActivityRecognitionService.active){
-			this.stopService((new Intent(this, ActivityRecognitionService.class).setAction("STOP_ACTIVITY_RECOGNITION")));
+	private void stopActivityRecognition(){
+		if(ApiService.ar_is_active){
+			this.stopService((new Intent(this, ApiService.class).setAction("STOP_AR")));
 		}
 	}
 
 	private void stopLocationUpdates(){
-		if(this.mClient.isConnected()){
-			LocationServices.FusedLocationApi.removeLocationUpdates(this.mClient, this);
+		if(ApiService.lu_is_active){
+			this.startService((new Intent(this, ApiService.class).setAction("STOP_LU")));
 		}
 	}
 	
