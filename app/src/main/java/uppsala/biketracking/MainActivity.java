@@ -1,25 +1,41 @@
 package uppsala.biketracking;
 
-import android.app.*;
-import android.content.*;
+/*import android.content.*;
 import android.graphics.*;
 import android.location.*;
 import android.os.*;
 import android.support.v4.app.*;
 import android.view.*;
 import android.widget.*;
-import com.google.android.gms.common.*;
-import com.google.android.gms.common.api.*;
-import com.google.android.gms.location.*;
 import com.google.android.gms.maps.*;
-import com.google.android.gms.maps.model.*;
+import com.google.android.gms.maps.model.*;*/
 
-import com.google.android.gms.location.LocationListener;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.view.Window;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 //import android.R;
 
 
-public class MainActivity extends FragmentActivity implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener
+public class MainActivity extends FragmentActivity
 {
 	public static boolean active = false;
 
@@ -32,16 +48,18 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	private Bitmap icon;
 	//private CollectedData data;
     private BroadcastReceiver receiver;
-    private IntentFilter recFilter;
+    private IntentFilter broadcast_filter;
 	//private AutoCompleteTextView autoCompView;
 
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!ApiService.rl_is_active) {
-            this.startService(new Intent(this, ApiService.class).setAction("START_RL"));
-        }
+
+		/******************/
+        startRecordLocation();
+		/******************/
+
         final boolean customTitleSupported = this.requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 
         this.mZoom = 20;
@@ -71,23 +89,28 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                             Toast.makeText(context, "UNABLE TO WRITE IN A FILE", Toast.LENGTH_LONG).show();
                             break;
 
-                        case ("SERVICE_DATA"):
-                        	//Bundle data = intent.getExtras();
+                        case ("RECOGNITION_DATA"):
                             MainActivity.this.updateActivity(intent.getExtras().getString("ACTIVITY_NAME"));
                             break;
-							
+						case ("LOCATION_DATA") :
+							Bundle extras = intent.getExtras();
+							MainActivity.this.changePosition(extras.getDouble("LATITUDE"), extras.getDouble("LONGITUDE"));
+							break;
                         default:
                             break;
                     }
                 }
             }
         };
-        this.recFilter = new IntentFilter();
-        this.recFilter.addAction("DATA_UPLOADED");
-        this.recFilter.addAction("UPLOAD_ERROR");
-        this.recFilter.addAction("FILE_ERROR");
-        this.recFilter.addAction("SERVICE_DATA");
-		this.startRecognitionUpdates();
+        this.broadcast_filter = new IntentFilter();
+        this.broadcast_filter.addAction("DATA_UPLOADED");
+        this.broadcast_filter.addAction("UPLOAD_ERROR");
+        this.broadcast_filter.addAction("FILE_ERROR");
+        this.broadcast_filter.addAction("RECOGNITION_DATA");
+        this.broadcast_filter.addAction("LOCATION_DATA");
+		if(!ApiService.ar_is_active){
+			startActivityRecognition();
+		}
     }
 
 	@Override
@@ -95,28 +118,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	{
 		// TODO: Implement this method
 		super.onStop();
-		this.mClient.disconnect();
-	}
-	
-	@Override
-	public void onConnected(Bundle connectionHint){
-		this.locReq = new LocationRequest();
-		this.locReq.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-		this.locReq.setFastestInterval(10000);
-		this.locReq.setInterval(15000);
-		//if(this.mClient.isConnected()){
-		onLocationChanged(LocationServices.FusedLocationApi.getLastLocation(this.mClient));
-	
-			
-		//}
-		this.startLocationUpdates();
-		
-	}
-	
-	private void startLocationUpdates(){
-		if(!ApiService.lu_is_active){
-			this.startService(new Intent(this, ApiService.class).setAction("START_LU"));
-		}
 	}
 	
 	private void startActivityRecognition(){
@@ -127,7 +128,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	
 	private void stopActivityRecognition(){
 		if(ApiService.ar_is_active){
-			this.stopService((new Intent(this, ApiService.class).setAction("STOP_AR")));
+			this.startService((new Intent(this, ApiService.class).setAction("STOP_AR")));
+		}
+	}
+
+	private void startLocationUpdates(){
+		if(!ApiService.lu_is_active){
+			this.startService(new Intent(this, ApiService.class).setAction("START_LU"));
 		}
 	}
 
@@ -136,48 +143,34 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 			this.startService((new Intent(this, ApiService.class).setAction("STOP_LU")));
 		}
 	}
-	
-	private void reconnectClient(){
-		if(this.active){
-			this.mClient.connect();
+
+	private void startRecordLocation(){
+		if(!ApiService.rl_is_active){
+			this.startService(new Intent(this, ApiService.class).setAction("START_RL"));
 		}
 	}
 
-	@Override
-	public void onConnectionSuspended(int cause)
-	{
-		reconnectClient();
-		// TODO: Implement this method
-	}
-
-	@Override
-	public void onConnectionFailed(ConnectionResult result)
-	{
-		reconnectClient();
-		// TODO: Implement this method
+	private void stopRecordLocation(){
+		if(ApiService.rl_is_active){
+			this.startService((new Intent(this, ApiService.class).setAction("STOP_RL")));
+		}
 	}
 
     @Override
     protected void onResume() {
         super.onResume();
-        this.registerReceiver(this.receiver, this.recFilter);
-		this.active = true;
+        this.registerReceiver(this.receiver, this.broadcast_filter);
+		active = true;
         this.setUpMapIfNeeded();
+		this.startLocationUpdates();
     }
 	
 	@Override
 	protected void onPause(){
 		super.onPause();
         this.unregisterReceiver(this.receiver);
-		this.active = false;
-	}
-	@Override
-	public void onLocationChanged(Location p1)
-	{
-		// TODO: Implement this method
-		if(p1 != null){
-			changePosition(p1.getLatitude(), p1.getLongitude());
-		}
+		active = false;
+		this.stopLocationUpdates();
 	}
 	
 	public void updateActivity(String name){
