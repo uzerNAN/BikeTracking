@@ -16,7 +16,7 @@ public class CollectedData
 	public CollectedData(Context c){
 		this.context = c;
 		this.send = new SendData();
-		this.data = new ArrayList<Data>();
+		this.data = new ArrayList<>();
 	}
 	
 	public boolean uploading(){
@@ -70,12 +70,12 @@ public class CollectedData
 		}
 		return time;
 	}
-	public boolean uploadData(){
+	public boolean uploadData(Context c){
 		boolean success = false;
 		if(!this.uploading()){
 			//if(this.dataIsEmpty()) { this.importFile(WakefulService.filePath); }
 			if(!this.isEmpty()){
-				this.send.setInput(this.dataToString());
+				this.send.setInput(this.dataToString(), c);
 				new Thread(this.send).start();
 				Log.i("UploadData","THREAD STARTED");
 				//this.uploading = true;
@@ -157,10 +157,6 @@ public class CollectedData
 				imprt = false;
 				e.printStackTrace();
 			}
-			catch(Exception e){
-				imprt = false;
-				e.printStackTrace();
-			}
 		}
 		if(!imprt){
 			this.removeLastData(counter);
@@ -184,15 +180,6 @@ public class CollectedData
 		}
 		result += "]";
 		return result;
-	}
-	public void finalization(){
-		this.resetData();
-		try{
-			this.finalize();
-		}
-		catch(java.lang.Throwable e){
-			e.printStackTrace();
-		}
 	}
 	
 	
