@@ -47,6 +47,7 @@
             </intent-filter>
         </service>
 		
+<<<<<<< HEAD
 		<service
 			android:name=".ActivityRecognitionSensor"
 			android:exported="false"
@@ -78,6 +79,18 @@
                 <action android:name="STOP_LU" />
                 <action android:name="LAST_DATA" />
 			</intent-filter>
+=======
+		<service
+			android:name="uppsala.biketracking.MainService"
+			android:exported="false"
+			android:enabled="true">
+				<intent-filter>
+					<action android:name="uppsala.biketracking.MainService" />
+					<action android:name="ACTIVITY_DATA" />
+					<action android:name="SERVICE_START" />
+					<action android:name="SERVICE_STOP" />
+				</intent-filter>
+>>>>>>> 1c7e6ede957a0568ccbc3727d024ac021bff0e5e
 		</service>
 		
 		

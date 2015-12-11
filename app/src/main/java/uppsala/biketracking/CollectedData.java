@@ -49,9 +49,15 @@ public class CollectedData
 		}
 		return iter;
 	}
+<<<<<<< HEAD
 	//public boolean isOnline(){
 	//	return RecordLocationService.isOnline(this.context);
 	//}
+=======
+	public boolean isOnline(){
+		return MainService.isOnline(this.context);
+	}
+>>>>>>> 1c7e6ede957a0568ccbc3727d024ac021bff0e5e
 	public void resetData(){
 		this.removeLastData(this.size);
 		Log.i("ResetUpdate","UPDATE RESETED");
@@ -212,6 +218,39 @@ public class CollectedData
 		}
 	}
 	
+<<<<<<< HEAD
+=======
+	
+	/*public void setIdSequence(int newsid, int index){
+		int sid = newsid;
+		long prvTime = 0;
+		if(index < this.size){
+			for(int i = index; i < this.size; i++){
+				if(Long.compare(prvTime, 0) > 0 && Long.compare((this.data.get(i).getTime()-prvTime), WakefulService.sessionTimeout) > 0){
+					sid++;
+				}
+				prvTime = this.data.get(i).getTime();
+				this.data.get(i).setSID(sid);
+			}
+		}
+	}
+	
+	private void setSpeed(){
+		Location l1 = new Location("previous location");
+		l1.setLatitude(this.data.get(0).getLatitude());
+		l1.setLongitude(this.data.get(0).getLongitude());
+		long time = this.data.get(0).getTime();
+		Location l2 = new Location("current location");
+		for(int i = 1; i < this.size; i++){
+			l2.setLatitude(this.data.get(i).getLatitude());
+			l2.setLongitude(this.data.get(i).getLongitude());
+			this.data.get(i).setSpeed(1000*l2.distanceTo(l1)/(this.data.get(i).getTime()-time));
+			l1.set(l2);
+			time = this.data.get(i).getTime();
+		}
+	}
+	
+>>>>>>> 1c7e6ede957a0568ccbc3727d024ac021bff0e5e
 	public boolean exportFile(String path){
 		boolean imprt = true;
 		//this.setIdSequence(0,0);

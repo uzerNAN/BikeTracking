@@ -72,6 +72,7 @@ public class SendData implements Runnable
 					Log.i("UPLOAD", "IS SUCCESSFUL");
 					result = true;
 
+<<<<<<< HEAD
 				}
 				else{
 					Log.i("UPLOAD", "FAILED: "+this.output);
@@ -80,6 +81,33 @@ public class SendData implements Runnable
 			catch(Exception e) {
 				Log.i("UploadException","Down here");
 				e.printStackTrace();
+=======
+			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			while((this.input = in.readLine()) != null){
+				this.output += this.input;
+			}
+			in.close();
+			if(!this.output.equals("")){
+				Log.i("UPLOAD", "IS SUCCESSFUL");
+				//this.output = "SUCCESS";
+				if(MainService.active){
+					MainService.successfullyUploaded();
+				}
+			}
+			else{
+				Log.i("UPLOAD", "FAILED");
+				//this.output = "FAIL";
+				if(MainService.active){
+					MainService.failedToUpload();
+				}
+			}
+			
+		}
+		catch(Exception e) {
+			Log.i("UploadException",e.toString());
+			if(MainService.active){
+				MainService.failedToUpload();
+>>>>>>> 1c7e6ede957a0568ccbc3727d024ac021bff0e5e
 			}
 			this.setUploading(false);
 			context.startService(new Intent(context, ApiService.class).putExtra("SUCCESS", result));

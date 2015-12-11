@@ -46,6 +46,7 @@
 		android:theme="@style/AppTheme"
 		android:configChanges="keyboardHidden|orientation|screenSize">
 
+<<<<<<< HEAD
 		<service
 			android:name=".ActivityRecognitionService"
 			android:exported="false"
@@ -68,13 +69,24 @@
 
 		<service
 			android:name=".RecordLocationService"
+=======
+		<service
+			android:name="uppsala.biketracking.MainService"
+>>>>>>> 1c7e6ede957a0568ccbc3727d024ac021bff0e5e
 			android:exported="false"
 			android:enabled="true">
 
 			<intent-filter>
 
 				<action
+<<<<<<< HEAD
 					android:name="uppsala.biketracking.RecordLocationService"/>
+=======
+					android:name="uppsala.biketracking.MainService"/>
+
+				<action
+					android:name="ACTIVITY_DATA"/>
+>>>>>>> 1c7e6ede957a0568ccbc3727d024ac021bff0e5e
 
 				<action
 					android:name="START_RECORDING"/>

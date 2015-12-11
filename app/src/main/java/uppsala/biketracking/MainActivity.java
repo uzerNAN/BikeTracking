@@ -1,5 +1,6 @@
 package uppsala.biketracking;
 
+<<<<<<< HEAD:app/src/main/java/uppsala/biketracking/MainActivity.java
 /*import android.content.*;
 import android.graphics.*;
 import android.location.*;
@@ -10,16 +11,23 @@ import android.widget.*;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;*/
 
+=======
+>>>>>>> 1c7e6ede957a0568ccbc3727d024ac021bff0e5e:app/src/main/java/uppsala/biketracking/MainActivity.java
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+<<<<<<< HEAD:app/src/main/java/uppsala/biketracking/MainActivity.java
+=======
+import android.location.Location;
+>>>>>>> 1c7e6ede957a0568ccbc3727d024ac021bff0e5e:app/src/main/java/uppsala/biketracking/MainActivity.java
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Window;
 import android.widget.LinearLayout;
+<<<<<<< HEAD:app/src/main/java/uppsala/biketracking/MainActivity.java
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +39,19 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+=======
+import android.widget.Toast;
+import android.widget.TextView;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Marker;
+
+>>>>>>> 1c7e6ede957a0568ccbc3727d024ac021bff0e5e:app/src/main/java/uppsala/biketracking/MainActivity.java
 
 //import android.R;
 
@@ -45,16 +66,25 @@ public class MainActivity extends FragmentActivity
 	private float mZoom;
 	private LinearLayout coordinates;
 	private String aName = "NO ACTIVITY";
+<<<<<<< HEAD:app/src/main/java/uppsala/biketracking/MainActivity.java
 	private Bitmap icon;
 	//private CollectedData data;
     private BroadcastReceiver receiver;
     private IntentFilter broadcast_filter;
+=======
+	private int aConfidence = 100;
+	private Bitmap icon;
+	//private CollectedData data;
+    private BroadcastReceiver receiver;
+    private IntentFilter recFilter;
+>>>>>>> 1c7e6ede957a0568ccbc3727d024ac021bff0e5e:app/src/main/java/uppsala/biketracking/MainActivity.java
 	//private AutoCompleteTextView autoCompView;
 
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+<<<<<<< HEAD:app/src/main/java/uppsala/biketracking/MainActivity.java
 
 		/******************/
         startRecordLocation();
@@ -67,8 +97,17 @@ public class MainActivity extends FragmentActivity
 
         if (customTitleSupported) {
             this.getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.titlebar);
+=======
+        Intent i = new Intent(this, MainService.class);
+        //this.data = new CollectedData(this);
+        if (!MainService.active) {
+            i.setAction("SERVICE_START");
+            this.startService(i);
+>>>>>>> 1c7e6ede957a0568ccbc3727d024ac021bff0e5e:app/src/main/java/uppsala/biketracking/MainActivity.java
         }
+        final boolean customTitleSupported = this.requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 
+<<<<<<< HEAD:app/src/main/java/uppsala/biketracking/MainActivity.java
         this.coordinates = (LinearLayout) this.findViewById(R.id.coordinates);
         this.icon = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
         this.icon.setPixel(0, 0, Color.argb(Color.alpha(R.color.transparent), Color.red(R.color.transparent), Color.green(R.color.transparent), Color.blue(R.color.transparent)));
@@ -155,12 +194,63 @@ public class MainActivity extends FragmentActivity
 			this.startService((new Intent(this, ApiService.class).setAction("STOP_RL")));
 		}
 	}
+=======
+        this.mZoom = 20;
+        this.setContentView(R.layout.activity_tracking);
+
+        if (customTitleSupported) {
+            this.getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.titlebar);
+        }
+
+        this.coordinates = (LinearLayout) this.findViewById(R.id.coordinates);
+        this.icon = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+        this.icon.setPixel(0, 0, Color.argb(Color.alpha(R.color.transparent), Color.red(R.color.transparent), Color.green(R.color.transparent), Color.blue(R.color.transparent)));
+        this.receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive (Context context, Intent intent){
+                if (intent != null) {
+                    switch (intent.getAction()) {
+                        case ("DATA_UPLOADED"):
+                            Toast.makeText(context, "Data was successfully uploaded to server", Toast.LENGTH_LONG).show();
+                            break;
+							
+                        case ("UPLOAD_ERROR"):
+                            Toast.makeText(context, "UNABLE TO UPLOAD DATA", Toast.LENGTH_LONG).show();
+                            break;
+
+                        case ("FILE_ERROR"):
+                            Toast.makeText(context, "UNABLE TO WRITE IN A FILE", Toast.LENGTH_LONG).show();
+                            break;
+
+                        case ("SERVICE_DATA"):
+                            Bundle data = intent.getExtras();
+                            MainActivity.this.updateActivity(data.getString("ACTIVITY_NAME"), data.getInt("ACTIVITY_CONFIDENCE"));
+                            break;
+							
+                        default:
+                            break;
+                    }
+                }
+            }
+        };
+        this.recFilter = new IntentFilter();
+        this.recFilter.addAction("DATA_UPLOADED");
+        this.recFilter.addAction("UPLOAD_ERROR");
+        this.recFilter.addAction("FILE_ERROR");
+        this.recFilter.addAction("SERVICE_DATA");
+    }
+>>>>>>> 1c7e6ede957a0568ccbc3727d024ac021bff0e5e:app/src/main/java/uppsala/biketracking/MainActivity.java
 
     @Override
     protected void onResume() {
         super.onResume();
+<<<<<<< HEAD:app/src/main/java/uppsala/biketracking/MainActivity.java
         this.registerReceiver(this.receiver, this.broadcast_filter);
 		active = true;
+=======
+        this.registerReceiver(this.receiver, this.recFilter);
+		this.active = true;
+>>>>>>> 1c7e6ede957a0568ccbc3727d024ac021bff0e5e:app/src/main/java/uppsala/biketracking/MainActivity.java
         this.setUpMapIfNeeded();
 		this.startLocationUpdates();
     }
@@ -169,6 +259,7 @@ public class MainActivity extends FragmentActivity
 	protected void onPause(){
 		super.onPause();
         this.unregisterReceiver(this.receiver);
+<<<<<<< HEAD:app/src/main/java/uppsala/biketracking/MainActivity.java
 		active = false;
 		this.stopLocationUpdates();
 	}
@@ -177,6 +268,14 @@ public class MainActivity extends FragmentActivity
 		if(!this.aName.equals(name)){
 			this.aName = name;
 			this.updateMarkerTitle("["+this.aName+"]");
+=======
+		this.active = false;
+	}
+	public void updateActivity(String name, int confidence){
+		if(!(this.aName.equals(name) && confidence == this.aConfidence)){
+			this.aName = name; this.aConfidence = confidence;
+			this.updateMarkerTitle(this.aName+" ["+this.aConfidence+"%]");
+>>>>>>> 1c7e6ede957a0568ccbc3727d024ac021bff0e5e:app/src/main/java/uppsala/biketracking/MainActivity.java
 		}
 	}
 
@@ -201,6 +300,16 @@ public class MainActivity extends FragmentActivity
 			@Override
 			public void onCameraChange(CameraPosition pos){
 				MainActivity.this.mZoom = pos.zoom;
+<<<<<<< HEAD:app/src/main/java/uppsala/biketracking/MainActivity.java
+=======
+			}
+		});
+		
+    	this.mMap.setOnMyLocationChangeListener( new GoogleMap.OnMyLocationChangeListener(){
+			@Override
+			public void onMyLocationChange(Location arg0){
+				MainActivity.this.changePosition(arg0.getLatitude(), arg0.getLongitude());
+>>>>>>> 1c7e6ede957a0568ccbc3727d024ac021bff0e5e:app/src/main/java/uppsala/biketracking/MainActivity.java
 			}
 		});
 	}
@@ -217,8 +326,12 @@ public class MainActivity extends FragmentActivity
 		LatLng latLng = new LatLng(latitude, longitude);
 		if(this.mMap != null){
 			this.mMarker = this.mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromBitmap(icon)));
+<<<<<<< HEAD:app/src/main/java/uppsala/biketracking/MainActivity.java
 			//this.mMarker.setVisible(true);
 			this.updateActivity(this.aName);
+=======
+			this.updateActivity(this.aName, this.aConfidence);
+>>>>>>> 1c7e6ede957a0568ccbc3727d024ac021bff0e5e:app/src/main/java/uppsala/biketracking/MainActivity.java
 			// Showing the current location in Google Map
 			this.mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 			// Zoom in the Google Map

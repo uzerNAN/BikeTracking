@@ -1,4 +1,4 @@
-
+<?php require_once 'functions.php'; ?>
 
 <html lang="en">
 <head>
@@ -14,62 +14,72 @@
 
 var map, pointarray, heatmap;
 <?php
-	//1. creat a database connection
-		$dbhost = "localhost";
-		$dbuser = "newuser";
-		$dbpass = "7zijian";
-		$dbname = "cn3";
-		$connection = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname);
-		
-	//Test if connection occurred
-	if(mysqli_connect_errno()){
-		die("Database connenction failed:".
-			mysqli_connect_error().
-			"(".mysqli_connect_errno().")"
-			);
-	}
+	$dbhost = "localhost";
+	$dbuser = "newuser";
+	$dbpass = "7zijian";
+	$dbname = "cn3";
+	$connection = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname);
 
-	//2.perform database query
-	$query 	= "select * ";
-	$query .= "from node ";
-	$result = mysqli_query($connection,$query);
-	// test if there was a query error
+	if(mysqli_connect_errno()){
+		die("Database connection failed:".
+		mysqli_connect_error().
+		"(".mysqli_connect_errno().")"
+		);
+	}
+		
+	 if($_POST['date']!='0'&&$_POST['time']!='0'){ 
+        $date = $_POST["date"];
+		$time = (int)$_POST['time'];
+		$time_from = $time - 1;		
+		$query = "SELECT * ";
+		$query.= "FROM node ";
+		$query.= "WHERE date(time)='{$date}' AND time(time)<'{$time}:00:00' && time(time)>'{$time_from}:00:00';";
+	 }elseif($_POST['date']!='0'){
+			$date = $_POST["date"];		
+			$query = "SELECT * ";
+			$query.= "FROM node ";
+			$query.= "WHERE date(time)='{$date}';";
+			
+	 }elseif($_POST['time']!='0'){
+			$time = (int)$_POST['time'];
+			$time_from = $time - 1;
+			$query = "SELECT * ";
+			$query.= "FROM node ";
+			$query.= "WHERE time(time)<'{$time}:00:00' && time(time)>'{$time_from}:00:00';";
+		
+	 }
+	 
+	$result = mysqli_query($connection, $query);
 	if(!$result)
 		die("Database query failed");
-
-			
-			$data = array();
-			$i = 0;
-			//3. use returned database
-			while($row = mysqli_fetch_array($result)){
-				//output data from each row
-				//var_dump($row);
-				$data[$i] = $row;
-				$i++;
-			}
-
-	$query2 = "SELECT count(longitude) ";
-	$query2.= "FROM node" ;
-	$count = mysqli_query($connection, $query2);
-	if(!$count)
-		die("Count query failed");
-	$count = mysqli_fetch_row($count)
+	$count = mysqli_num_rows($result);
+	$data = array();
+	$i = 0;
+	while($row = mysqli_fetch_array($result)){
+		$data[$i] = $row;
+		$i++;
+	}	 
 ?>
 var m,n;
 var data = <?php echo json_encode( $data ) ?>;
 var NumofRows = <?php echo json_encode( $count ) ?>; 
-var Data = [];
 
- for (m=0; m < NumofRows; m++){
-		 Data.push(new google.maps.LatLng(data[m][3], data[m][2]));
- }
-
+if (NumofRows == 0){
+	alert("Sorry! There is no data during your selected time.");
+	window.location.href = "create_heatmap.php";
+}else{
+	var Data = [];
+	for (m=0; m < NumofRows; m++){
+		 Data.push(new google.maps.LatLng(data[m][4], data[m][3]));
+	}
+}
 
 function initialize() {
   var markers = [];	
   var mapOptions = {
-    zoom: 13,
-    center: new google.maps.LatLng(59.2911, 17.9327),
+    zoom: 14,
+	//center: new google.maps.LatLng(59, 18),
+    center: new google.maps.LatLng(data[0][4], data[0][3]),
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
 
@@ -187,20 +197,20 @@ google.maps.event.addDomListener(window, 'load', initialize);
 			<ul id="menu">
 				<li ><a href="index.html"><span><span>About</span></span></a></li>
 				<li><a href="bicycling_route.html"><span><span>Bicycling Route</span></span></a></li>
-				<li id="menu_active" class="end"><a href="heatmap.php"><span><span>Heatmap</span></span></a></li>
+				<li id="menu_active" class="end"><a href="create_heatmap.php"><span><span>Heatmap</span></span></a></li>
 			</ul>
 		</nav>
 	</header>
 <!-- / header -->
-
-	<input id="pac-input" class="controls" type="text" placeholder="Search Box">
-    <div id="heat_map"></div>
-		<div id="panel">
+			<div id="panel">
       <button onclick="toggleHeatmap()">Toggle Heatmap</button>
       <button onclick="changeGradient()">Change gradient</button>
       <button onclick="changeRadius()">Change radius</button>
       <button onclick="changeOpacity()">Change opacity</button>
     </div>
+	<input id="pac-input" class="controls" type="text" placeholder="Search Box">
+    <div id="heat_map"></div>
+
 	<br><br><br>
 			<!--footer -->
 			<footer>
