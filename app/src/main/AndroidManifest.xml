@@ -25,26 +25,58 @@
         android:theme="@style/AppTheme"
 		android:configChanges="keyboardHidden|orientation|screenSize"
 		>
+
+        <receiver android:name=".PowerSavingSync"
+            android:exported="false"
+            android:enabled="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.ACTION_EXTERNAL_APPLICATIONS_AVAILABLE"/>
+                <action android:name="android.intent.action.ACTION_BATTERY_LOW"/>
+                <action android:name="android.intent.action.ACTION_BATTERY_OKAY"/>
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".PowerSavingModule"
+            android:exported="false"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="BATTERY_CHECK" />
+                <action android:name="uppsala.biketracking.PowerSavingModule" />
+            </intent-filter>
+        </service>
 		
 		<service
-			android:name=".ActivityRecognitionService"
+			android:name=".ActivityRecognitionSensor"
 			android:exported="false"
 			android:enabled="true">
 			<intent-filter>
-				<action android:name="uppsala.biketracking.ActivityRecognitionService" />
-				<action android:name="START_ACTIVITY_RECOGNITION" />
-				<action android:name="STOP_ACTIVITY_RECOGNITION" />
+				<action android:name="uppsala.biketracking.ActivityRecognitionSensor" />
 			</intent-filter>
 		</service>
 		
 		<service
-			android:name=".RecordLocationService"
+			android:name=".RecordLocationSensor"
 			android:exported="false"
 			android:enabled="true">
 			<intent-filter>
-				<action android:name="uppsala.biketracking.RecordLocationService" />
-				<action android:name="START_RECORDING" />
-				<action android:name="STOP_RECORDING" />
+				<action android:name="uppsala.biketracking.RecordLocationSensor" />
+			</intent-filter>
+		</service>
+
+        <service
+			android:name=".ApiService"
+			android:exported="false"
+			android:enabled="true">
+			<intent-filter>
+				<action android:name="START_RL" />
+				<action android:name="STOP_RL" />
+                <action android:name="START_AR" />
+                <action android:name="STOP_AR" />
+                <action android:name="START_LU" />
+                <action android:name="STOP_LU" />
+                <action android:name="LAST_DATA" />
 			</intent-filter>
 		</service>
 		
