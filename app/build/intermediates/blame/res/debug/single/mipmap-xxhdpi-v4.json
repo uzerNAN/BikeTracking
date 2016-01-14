@@ -1,9 +1,5 @@
 [
     {
-        "merged": "C:\\Users\\Unknown\\AndroidStudioProjects\\BikeTracking\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xxhdpi-v4\\ic_launcher.png",
-        "source": "C:\\Users\\Unknown\\AndroidStudioProjects\\BikeTracking\\app\\src\\main\\res\\mipmap-xxhdpi\\ic_launcher.png"
-    },
-    {
         "merged": "C:\\Users\\Sergej\\AndroidStudioProjects\\BikeTracking\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xxhdpi-v4\\ic_launcher.png",
         "source": "C:\\Users\\Sergej\\AndroidStudioProjects\\BikeTracking\\app\\src\\main\\res\\mipmap-xxhdpi\\ic_launcher.png"
     }

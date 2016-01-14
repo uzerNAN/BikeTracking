@@ -1,0 +1,45 @@
+[
+    {
+        "outputFile": "C:\\Users\\Sergej\\AndroidStudioProjects\\BikeTracking\\app\\build\\intermediates\\res\\merged\\androidTest\\debug\\values\\values.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 2,
+                    "startColumn": 4,
+                    "startOffset": 55,
+                    "endColumn": 96,
+                    "endOffset": 147
+                },
+                "from": {
+                    "file": "C:\\Users\\Sergej\\AndroidStudioProjects\\BikeTracking\\app\\build\\generated\\res\\resValues\\androidTest\\debug\\values\\generated.xml",
+                    "position": {
+                        "startLine": 6,
+                        "startColumn": 4,
+                        "startOffset": 160,
+                        "endColumn": 96,
+                        "endOffset": 252
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 3,
+                    "startColumn": 4,
+                    "startOffset": 152,
+                    "endColumn": 97,
+                    "endOffset": 245
+                },
+                "from": {
+                    "file": "C:\\Users\\Sergej\\AndroidStudioProjects\\BikeTracking\\app\\build\\generated\\res\\resValues\\androidTest\\debug\\values\\generated.xml",
+                    "position": {
+                        "startLine": 7,
+                        "startColumn": 4,
+                        "startOffset": 258,
+                        "endColumn": 97,
+                        "endOffset": 351
+                    }
+                }
+            }
+        ]
+    }
+]

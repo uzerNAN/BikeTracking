@@ -1,37 +1,34 @@
 package uppsala.biketracking;
 
-import android.content.*;
-import android.location.*;
-import android.util.*;
-import java.io.*;
-import java.util.*;
+
+import android.util.Log;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 public class CollectedData
 {
 	
 	private List<Data> data;
-	private int size = 0;
-	private Context context;
-	private SendData send;
-	public CollectedData(Context c){
-		this.context = c;
-		this.send = new SendData();
-		this.data = new ArrayList<>();
+	public CollectedData(){
+		this.data = new LinkedList<>();
 	}
-	
-	public boolean uploading(){
-		boolean uploading = false;
-		if(this.send != null){
-			uploading = this.send.uploading();
-		}
-		return uploading;
-	}
+
 	public boolean isEmpty(){
-		return this.size == 0;
+		return data.size() == 0;
+	}
+	public int size(){
+		return data.size();
 	}
 	public void add(int id, double latitude, double longitude, long time, float speed, float accuracy){
-		this.data.add(this.size, new Data(id, latitude, longitude, time, speed, accuracy));
-		this.size++;
+		this.data.add(new Data(id, latitude, longitude, time, speed, accuracy));
+	}
+	public void add(int id, double latitude, double longitude, long time, float speed, float accuracy, String placeId){
+		this.data.add(new Data(id, latitude, longitude, time, speed, accuracy, placeId));
 	}
 	/*public List<Data> getBySID(int sid){
 		List<Data> iter = new ArrayList<Data>();
@@ -44,120 +41,97 @@ public class CollectedData
 	}*/
 	public Data get(int id){
 		Data iter = null;
-		if(id < this.size){
+		if(0 <= id && id < data.size()){
 			iter = this.data.get(id);
 		}
 		return iter;
 	}
-<<<<<<< HEAD
 	//public boolean isOnline(){
 	//	return RecordLocationService.isOnline(this.context);
 	//}
-=======
-	public boolean isOnline(){
-		return MainService.isOnline(this.context);
-	}
->>>>>>> 1c7e6ede957a0568ccbc3727d024ac021bff0e5e
 	public void resetData(){
-		this.removeLastData(this.size);
-		Log.i("ResetUpdate","UPDATE RESETED");
+		data.clear();
 	}
-	public int getLastSID(){
-		int sid = 0;
-		if(!this.isEmpty()){
-			sid = this.data.get(this.size-1).getSID();
-		}
-		return sid;
-	}
-	public long getLastTime(){
-		long time = 0;
-		if(!this.isEmpty()){
-			time = this.data.get(this.size-1).getTime();
-		}
-		return time;
-	}
-	public boolean uploadData(Context c){
+	/*public boolean uploadData(Context c){
 		boolean success = false;
 		if(!this.uploading()){
 			//if(this.dataIsEmpty()) { this.importFile(WakefulService.filePath); }
 			if(!this.isEmpty()){
 				this.send.setInput(this.dataToString(), c);
 				new Thread(this.send).start();
-				Log.i("UploadData","THREAD STARTED");
+				Log.i(C.UPLOAD_TXT, "THREAD STARTED");
 				//this.uploading = true;
 				success = true;
 			}
 		}
 		else{
-			Log.i("UploadData","UNABLE TO START THREAD: data.size="+this.size+", uploading="+this.uploading());
+			Log.i(C.UPLOAD_TXT,"UNABLE TO START THREAD: data.size="+this.size+", uploading="+this.uploading());
 		}
 		return success;
-	}
+	}*/
 	
 	private void removeLastData(int last){
-		if(last > 0 && !this.isEmpty() && this.size >= last){
+		if(last > 0 && !this.isEmpty() && data.size() >= last){
 			boolean finalization = true;
-			for(int i = this.size-1; i >= (this.size-last); i--){
+			int size = data.size();
+			for(int i = size-1; i >= (size-last); i--){
 				if(finalization){
 					finalization = this.data.get(i).finalization();
 					if(!finalization){
-						Log.i("RemoveLastUpdate","UNABLE TO FINALIZE DATA OBJECT, STOPPING FINALIZING, ONLY REMOVE FROM LISTS");
+						Log.i("RemoveLastUpdate", "UNABLE TO FINALIZE DATA OBJECT, STOPPING FINALIZING, ONLY REMOVE FROM LISTS");
 					}
 				}
 				this.data.remove(i);
 			}
-			this.size -= last;
 			Log.i("RemoveLastUpdate","SUCCESSFULLY REMOVED "+last+" LAST OBJECTS FROM LISTS; finalization="+finalization);
 		}
 		else{
-			Log.i("RemoveLastUpdate","FAIL: last="+last+", data.size="+this.size);
+			Log.i("RemoveLastUpdate","FAIL: last="+last+", data.size="+data.size());
 		}
 	}
 	
-	public boolean importFile(String path){
+	public boolean importFile(String path, boolean corrected){
 		boolean imprt = true; int counter = 0;
-		File updateLog = new File(path);
+		File updateLog = new File(C.getSaveDirectory(), path);
 		if(updateLog.exists()){
 			try{
 				BufferedReader buf = new BufferedReader(new FileReader(updateLog));
 				String line;
 				String[] splitLine, splitSID, splitTime, splitSpeed, splitAccuracy, splitLatitude, splitLongitude;
 				while((line = buf.readLine()) != null){
-					if(line.matches("[A-Z0-9.| ]*")){
+					if(line.matches(C.MATCH_SYMBOLS)){
 						splitLine = line.split("\\|");
-						splitSID = splitLine[0].split(" ");
-						splitLatitude = splitLine[1].split(" ");
-						splitLongitude = splitLine[2].split(" ");
-						splitTime = splitLine[3].split(" ");
-						splitSpeed = splitLine[4].split(" ");
-						splitAccuracy = splitLine[5].split(" ");
-						if(splitSID[0].equals("SID")
-						&& splitLatitude[0].equals("LATITUDE") 
-						&& splitLongitude[0].equals("LONGITUDE") 
-						&& splitTime[0].equals("TIME") 
-						&& splitSpeed[0].equals("SPEED")
-						&& splitAccuracy[0].equals("ACCURACY")){
-							this.add(Integer.parseInt(splitSID[1]), Double.parseDouble(splitLatitude[1]), Double.parseDouble(splitLongitude[1]), Long.parseLong(splitTime[1]), Float.parseFloat(splitSpeed[1]), Float.parseFloat(splitAccuracy[1]));
+						splitSID = splitLine[0].split(C.SPACE);
+						splitLatitude = splitLine[1].split(C.SPACE);
+						splitLongitude = splitLine[2].split(C.SPACE);
+						splitTime = splitLine[3].split(C.SPACE);
+						splitSpeed = splitLine[4].split(C.SPACE);
+						splitAccuracy = splitLine[5].split(C.SPACE);
+						if(splitSID[0].equals(C.SID_TXT)
+						&& splitLatitude[0].equals(C.LAT_TXT)
+						&& splitLongitude[0].equals(C.LON_TXT)
+						&& splitTime[0].equals(C.TIME_TXT)
+						&& splitSpeed[0].equals(C.SPEED_TXT)
+						&& splitAccuracy[0].equals(C.ACCURACY_TXT)){
+							if(corrected) {
+								this.add(Integer.parseInt(splitSID[1]), Double.parseDouble(splitLatitude[1]), Double.parseDouble(splitLongitude[1]), Long.parseLong(splitTime[1]), Float.parseFloat(splitSpeed[1]), Float.parseFloat(splitAccuracy[1]), (splitLine.length>=7)?splitLine[6]:C.NO_PID);
+							}
+							else{
+								this.add(Integer.parseInt(splitSID[1]), Double.parseDouble(splitLatitude[1]), Double.parseDouble(splitLongitude[1]), Long.parseLong(splitTime[1]), Float.parseFloat(splitSpeed[1]), Float.parseFloat(splitAccuracy[1]));
+							}
 							counter++;
 						}
 						else{
-							Log.i("ImportActivityFile","FILE LINE HAS DIFFERENT CONTENT");
 							imprt = false;
 							break;
 						}
 					}
 					else{
-						Log.i("ImportActivityFile","UNKNOWN LINE: "+line);
 						imprt = false;
 						break;
 					}
 				}
 				buf.close();
-				Log.i("ImportActivityFile","IMPORTED "+counter+" LINES");
-			}
-			catch(ArrayIndexOutOfBoundsException e){
-				imprt = false;
-				e.printStackTrace();
 			}
 			catch(IOException e){
 				imprt = false;
@@ -167,24 +141,38 @@ public class CollectedData
 		if(!imprt){
 			this.removeLastData(counter);
 		}
-		Log.i("TO STRING", this.dataToString());
-		Log.i("ImportActivityFile", "imprt="+imprt);
 		return imprt;
 	}
 	public String toString(){
-		return "{\"data\":"+this.dataToString()+"}";
+		return C.JSON_OBJ_START
+				+ C.data_TXT + C.JSON_VAR_EQUALS + this.dataToString()
+			 + C.JSON_VAR_OBJ_END;
 	}
 	public String dataToString(){
-		String result = "[";
-		if(this.size > 0){
-			for(int i = 0; i < this.size; i++){
+		String result = C.JSON_LIST_START;
+		if(data.size() > 0){
+			for(int i = 0; i < data.size(); i++){
 				result += this.data.get(i).toString();
-				if(i+1 < this.size){
-					result += ",";
+				if(i+1 < data.size()){
+					result += C.JSON_LIST_COMMA;
 				}
 			}
 		}
-		result += "]";
+		result += C.JSON_LIST_END;
+		return result;
+	}
+
+	public String dataToFileString(boolean corrected){
+		String result = C.EMPTY, pid = C.EMPTY;
+
+		if(data.size() > 0){
+			for(int i = 0; i < data.size(); i++){
+				if(corrected){
+					pid = C.SPLIT + data.get(i).getPID();
+				}
+				result += data.get(i).toFileString(pid + C.NEW_LINE);
+			}
+		}
 		return result;
 	}
 	
@@ -218,39 +206,6 @@ public class CollectedData
 		}
 	}
 	
-<<<<<<< HEAD
-=======
-	
-	/*public void setIdSequence(int newsid, int index){
-		int sid = newsid;
-		long prvTime = 0;
-		if(index < this.size){
-			for(int i = index; i < this.size; i++){
-				if(Long.compare(prvTime, 0) > 0 && Long.compare((this.data.get(i).getTime()-prvTime), WakefulService.sessionTimeout) > 0){
-					sid++;
-				}
-				prvTime = this.data.get(i).getTime();
-				this.data.get(i).setSID(sid);
-			}
-		}
-	}
-	
-	private void setSpeed(){
-		Location l1 = new Location("previous location");
-		l1.setLatitude(this.data.get(0).getLatitude());
-		l1.setLongitude(this.data.get(0).getLongitude());
-		long time = this.data.get(0).getTime();
-		Location l2 = new Location("current location");
-		for(int i = 1; i < this.size; i++){
-			l2.setLatitude(this.data.get(i).getLatitude());
-			l2.setLongitude(this.data.get(i).getLongitude());
-			this.data.get(i).setSpeed(1000*l2.distanceTo(l1)/(this.data.get(i).getTime()-time));
-			l1.set(l2);
-			time = this.data.get(i).getTime();
-		}
-	}
-	
->>>>>>> 1c7e6ede957a0568ccbc3727d024ac021bff0e5e
 	public boolean exportFile(String path){
 		boolean imprt = true;
 		//this.setIdSequence(0,0);

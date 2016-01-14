@@ -1,387 +1,429 @@
 package uppsala.biketracking;
 
-
+import android.app.IntentService;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.Binder;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 
-public class ApiService extends Service implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener
-{
-	
-	private GoogleApiClient mClient = null;
-	private LocationRequest record_req = null;
-	private LocationListener location = null;
-	private LocationRequest location_req = null;
-	//private static ApiService service = null;
-	public static boolean ar_is_active = false;
-	public static boolean rl_is_active = false;
-	public static boolean lu_is_active = false;
-	public static boolean active = false;
-	public static boolean do_upload = false;
-	public static int rl_sid = 0;
-	public static double rl_latitude = 0;
-	public static double rl_longitude = 0;
-	public static long rl_time = 0;
+public class ApiService extends IntentService {
+
+	private static GoogleApiClient mClient = null;
+	private static LocationListener location = null;
+
+	public ApiService() {
+		super(ApiService.class.getName());
+	}
+
+	public static boolean active(){
+		return (mClient != null);
+	}
+
+	public static boolean ar_is_active(Context context){
+		return (PendingIntent.getService(context, C.AR_ID, new Intent(context, ActivityRecognitionSensor.class), PendingIntent.FLAG_NO_CREATE) != null);
+	}
+
+	public static boolean rl_is_active(Context context){
+		return (PendingIntent.getService(context, C.RL_ID, new Intent(context, RecordLocationSensor.class), PendingIntent.FLAG_NO_CREATE) != null);
+	}
+
+	public static boolean lu_is_active(){
+		return (location != null);
+	}
+
+	public static boolean do_upload(){
+		return (new File(C.getSaveDirectory(), C.CORRECTED_DATA).exists());
+	}
+
+	public static boolean do_correct(){
+		return (new File(C.getSaveDirectory(), C.TEMPORARY_DATA).exists());
+	}
 
 	@Override
-	public void onCreate(){
+	public void onCreate() {
 		super.onCreate();
-		loadSettings(Constants.SETTINGS_PATH);
-		connectGoogleApiClient();
+		checkGoogleClient();
 	}
 
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId){
-		Log.i("ApiService", "BATTERY_HIGH " + PowerSavingModule.battery_high + " | BATTERY_LOW " + PowerSavingModule.battery_low);
-		if(!PowerSavingModule.battery_low || MainActivity.active) {
-			if (intent != null) {
-				String action = intent.getAction();
-				switch (action) {
-					case "LAST_DATA":
-						Bundle extras = intent.getExtras();
-						rl_sid = extras.getInt("SID");
-						rl_latitude = extras.getDouble("LATITUDE");
-						rl_longitude = extras.getDouble("LONGITUDE");
-						rl_time = extras.getLong("TIME");
-						break;
-					case "START_AR":
-						if (!ar_is_active) {
-							if (this.mClient.isConnected()) {
-								activateActivityRecognition();
-							}
-							ar_is_active = true;
-						}
-						break;
-					case "START_RL":
-						if (!rl_is_active) {
-							if (this.mClient.isConnected()) {
-								activateRecordLocation();
-							}
-							rl_is_active = true;
-							updateActivityRecognition();
-						}
-						break;
-					case "START_LU":
-						if (!lu_is_active) {
-							if (this.mClient.isConnected()) {
-								activateLocationUpdates();
-							}
-							lu_is_active = true;
-							updateActivityRecognition();
-						}
-						break;
-					case "STOP_AR":
-						if (ar_is_active) {
-							stopActivityRecognition();
-							ar_is_active = false;
-						}
-						break;
-					case "STOP_RL":
-						if (rl_is_active) {
-							stopRecordLocation();
-							rl_is_active = false;
-							updateActivityRecognition();
-							do_upload = ((new File(Constants.DATA_PATH)).length() != 0);
-						}
-						break;
-					case "STOP_LU":
-						if (lu_is_active) {
-							stopLocationUpdates();
-							lu_is_active = false;
-							updateActivityRecognition();
-						}
-						break;
-					case "DATA_RESULT":
-						data_uploaded(intent.getBooleanExtra("SUCCESS", false));
-						break;
-					default:
-						break;
-				}
-				check_if_needed(startId);
-			}
-		}
-		else {
-			stopSelf(startId);
-		}
-		return START_STICKY_COMPATIBILITY;
-	}
-
-	private void check_if_needed(int startId){
-		if(!ar_is_active && !lu_is_active && !rl_is_active){
-			stopSelf(startId);
-		}
-	}
-
-	private void updateActivityRecognition(){
-		if (!lu_is_active && !rl_is_active) {
-			stopActivityRecognition();
-			startActivityRecognition(Constants.AR_TIME);
-		}
-		else if (!(lu_is_active && rl_is_active)){
-			stopActivityRecognition();
-			startActivityRecognition(Constants.AR_FASTEST_TIME);
-		}
-	}
-
-	private void activateActivityRecognition(){
-		if (!lu_is_active && !rl_is_active) {
-			startActivityRecognition(Constants.AR_TIME);
-		}
-		else if (!(lu_is_active && rl_is_active)){
-			startActivityRecognition(Constants.AR_FASTEST_TIME);
-		}
-	}
-
-	private void activateLocationUpdates(){
-		createLocationRequest(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-		startLocationUpdates();
-	}
-
-	private void activateRecordLocation(){
-		int priority;
-		if (PowerSavingModule.battery_high) {
-			priority = LocationRequest.PRIORITY_HIGH_ACCURACY;
-		}
-		else {
-			priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY;
-		}
-		createRecordRequest(priority);
-		startRecordLocation();
-	}
-
-	public static boolean isOnline(Context context){
-		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo activeNI = cm.getActiveNetworkInfo();
-		return activeNI != null && activeNI.isConnected();
-	}
-
-	private void reconnectClient(){
-		if(!this.mClient.isConnected() && !this.mClient.isConnecting()){
-			this.mClient.connect();
-		}
-	}
-
-	@Override
-	public void onConnectionSuspended(int p1)
-	{
-		reconnectClient();
-		// TODO: Implement this method
-	}
-
-	@Override
-	public void onConnectionFailed(ConnectionResult p1)
-	{
-		reconnectClient();
-		// TODO: Implement this method
-	}
-
-	protected void createLocationRequest(int priority) {
-		location_req = new LocationRequest();
-		location_req.setInterval(Constants.RL_TIME);
-		location_req.setFastestInterval(Constants.RL_FASTEST_TIME);
-		location_req.setPriority(priority);
-		if(location == null){
+	private static void createLocationListener(final Context context){
+		if (location == null) {
 			location = new LocationListener() {
+				private final Context c = context;
 				@Override
 				public void onLocationChanged(Location location) {
-					if(location != null){
-						if(MainActivity.active) {
-							sendBroadcast(
+					if (location != null) {
+						if (MapsActivity.active()) {
+							c.sendBroadcast(
 									new Intent()
-											.setAction("LOCATION_DATA")
-											.putExtra("LATITUDE", location.getLatitude())
-											.putExtra("LONGITUDE", location.getLongitude()));
-						}
-						else {
-							stopLocationUpdates();
+											.setAction(C.LOCATION_DATA_TXT)
+											.putExtra(C.LAT_TXT, location.getLatitude())
+											.putExtra(C.LON_TXT, location.getLongitude()));
 						}
 					}
 				}
 			};
 		}
 	}
-	protected void createRecordRequest(int priority) {
-		record_req = new LocationRequest();
-		record_req.setInterval(Constants.LU_TIME);
-		record_req.setFastestInterval(Constants.LU_FASTEST_TIME);
-		record_req.setPriority(priority);
+
+
+	@Override
+	public void onHandleIntent(Intent intent) {
+		if (intent != null) {
+			switch (intent.getAction()) {
+				case C.ACTIVITY_RECOGNITION_TXT:
+					activityRecognition(intent.getBooleanExtra(C.START_TXT, false));
+					break;
+				case C.RECORD_LOCATION_TXT:
+					recordLocation(intent.getBooleanExtra(C.START_TXT, false));
+					break;
+				case C.LOCATION_UPDATES_TXT:
+					locationUpdates(intent.getBooleanExtra(C.START_TXT, false));
+					break;
+				case C.CORRECT_TXT:
+					corrected(intent.getBooleanExtra(C.SUCCESS_TXT, false));
+					break;
+				case C.UPLOAD_TXT:
+					uploaded(intent.getBooleanExtra(C.SUCCESS_TXT, false));
+					break;
+				case C.CHECK_BATTERY_STATE_TXT:
+					checkBatteryState();
+					break;
+				case C.NETWORK_NOTIFICATION_TXT:
+					networkNotification();
+					break;
+				default:
+					break;
+			}
+			check_if_needed();
+		}
+		//return START_STICKY_COMPATIBILITY;
 	}
 
-	public void onConnected(Bundle p1){
-		if(lu_is_active){
-			this.activateLocationUpdates();
-		}
-		if(rl_is_active){
-			this.activateRecordLocation();
-		}
-		if(ar_is_active) {
-			this.activateActivityRecognition();
+	private void checkGoogleClient(){
+		if (mClient != null){
+			if(!client(getApplicationContext()).isConnected() && !client(getApplicationContext()).isConnecting()) {
+				client(getApplicationContext()).connect();
+			}
+		} else if (googlePlayServicesAvailable()) {
+			connectGoogleApiClient(getApplicationContext());
 		}
 	}
 
-	protected synchronized void connectGoogleApiClient() {
-		if(this.mClient == null){
-			this.mClient = new GoogleApiClient.Builder(this)
-				.addApi(ActivityRecognition.API)
-				.addApi(LocationServices.API)
-				.addConnectionCallbacks(this)
-				.addOnConnectionFailedListener(this)
-				.build();
+	private boolean googlePlayServicesAvailable() {
+		int state = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
+		boolean available = (ConnectionResult.SUCCESS == state);
+		if (!available && MapsActivity.active()) {
+			sendBroadcast(new Intent().setAction(C.GOOGLE_SERVICES_UNAVAILABLE_TXT).putExtra(C.STATE_TXT, state));
+		}
+		return available;
+	}
+
+	private void networkNotification(){
+		if (NetworkStateNotifier.available()) {
+			startCorrect();
+			startUpload();
+		}
+	}
+
+	private static void buttonCheck(Context context, int id){
+		if(MapsActivity.active()){
+			context.sendBroadcast(new Intent().setAction(C.UPDATE_BUTTON_TXT).putExtra(C.BUTTON_TXT, id));
+		}
+	}
+
+	private void activityRecognition(boolean start) {
+		if (start) {
+			if (!ar_is_active(getApplicationContext()) && MapsActivity.ar_remote()) {
+				if (client(getApplicationContext()).isConnected()) {
+					updateActivityRecognition(getApplicationContext());
+				} else {
+					reconnectClient();
+				}
+			}
+		} else {
+			if (ar_is_active(getApplicationContext()) && !MapsActivity.ar_remote()) {
+				if (client(getApplicationContext()).isConnected()) {
+					stopActivityRecognition(getApplicationContext());
+				}
+				else {
+					reconnectClient();
+				}
+			}
+		}
+		//buttonCheck(R.id.ACTIVITY_RECOGNITION);
+	}
+
+	private void recordLocation(boolean start) {
+		if (start) {
+			if (!rl_is_active(getApplicationContext())) {
+				if (client(getApplicationContext()).isConnected()) {
+					updateRecordLocation(getApplicationContext());
+					if (!lu_is_active()) {
+						updateActivityRecognition(getApplicationContext());
+					}
+				} else {
+					reconnectClient();
+				}
+			}
+		} else {
+			if (rl_is_active(getApplicationContext())) {
+				if (client(getApplicationContext()).isConnected()) {
+					stopRecordLocation(getApplicationContext());
+					if (!lu_is_active()) {
+						updateActivityRecognition(getApplicationContext());
+					}
+				} else {
+					reconnectClient();
+				}
+				RecordLocationSensor.flush_buffer();
+				String fileTo;
+				if(Correct.correcting()){
+					fileTo = C.WAITING_TEMPORARY_DATA;
+				} else {
+					fileTo = C.TEMPORARY_DATA;
+				}
+				C.appendFileTo(C.RAW_DATA, fileTo);
+				if(do_correct() && !Correct.correcting()) {
+					startCorrect();
+				}
+			}
+		}
+		//buttonCheck(R.id.RECORD_LOCATION);
+	}
+
+	private void locationUpdates(boolean start) {
+		if (start) {
+			if (!lu_is_active()) {
+				if (client(getApplicationContext()).isConnected()) {
+					startLocationUpdates(LocationRequest.PRIORITY_HIGH_ACCURACY, getApplicationContext());
+					if(!rl_is_active(getApplicationContext())) {
+						updateActivityRecognition(getApplicationContext());
+					}
+				} else {
+					reconnectClient();
+				}
+			}
+		} else {
+			if (lu_is_active()) {
+				if (client(getApplicationContext()).isConnected()) {
+					stopLocationUpdates();
+					if (!rl_is_active(getApplicationContext())) {
+						updateActivityRecognition(getApplicationContext());
+					}
+				} else {
+					reconnectClient();
+				}
+			}
+		}
+	}
+
+	private static GoogleApiClient client(Context context){
+		if(mClient == null){
+			connectGoogleApiClient(context);
+		}
+		return mClient;
+	}
+
+	private void checkBatteryState() {
+		if(!active()){
+			if(client(getApplicationContext()).isConnected()){
+				updateActivityRecognition(getApplicationContext());
+			} else if (MapsActivity.active() || MapsActivity.ar_remote() || MapsActivity.rl_remote()) {
+				mClient.connect();
+			}
+		} else if (rl_is_active(getApplicationContext())) {
+			stopRecordLocation(getApplicationContext());
+			updateRecordLocation(getApplicationContext());
+		}
+	}
+
+	private void check_if_needed() {
+		if (!ar_is_active(getApplicationContext()) && !lu_is_active() && !rl_is_active(getApplicationContext()) || PowerSavingModule.battery_low() && !MapsActivity.rl_remote() && !MapsActivity.ar_remote()) {
+			if (client(getApplicationContext()).isConnected()) {
+				if (ar_is_active(getApplicationContext())) {
+					stopActivityRecognition(getApplicationContext());
+				}
+				if (lu_is_active()) {
+					stopLocationUpdates();
+				}
+				if (rl_is_active(getApplicationContext())) {
+					stopRecordLocation(getApplicationContext());
+				}
+				client(getApplicationContext()).disconnect();
+				mClient = null;
+			}
+		}
+	}
+
+	private static void updateActivityRecognition(Context context) {
+		if (!(lu_is_active() && rl_is_active(context)) && MapsActivity.ar_remote()) {
+			if (ar_is_active(context)) {
+				stopActivityRecognition(context);
+			}
+			int time;
+			if (!lu_is_active() && !rl_is_active(context)) {
+				time = C.AR_TIME;
+			} else {
+				time = C.AR_FASTEST_TIME;
+			}
+			startActivityRecognition(time, context);
+		}
+	}
+
+	private static void updateRecordLocation(Context context) {
+		int priority;
+		if (PowerSavingModule.battery_high()) {
+			priority = LocationRequest.PRIORITY_HIGH_ACCURACY;
+		} else {
+			priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY;
+		}
+		startRecordLocation(priority, context);
+	}
+
+	private static void reconnectClient() {
+		if (mClient != null){
+			if(!mClient.isConnected() && !mClient.isConnecting()) {
+				mClient.connect();
+			}
+		}
+	}
+
+	private static synchronized void connectGoogleApiClient(final Context context) {
+		if (mClient == null && context != null) {
+			mClient = new GoogleApiClient.Builder(context)
+					.addApi(ActivityRecognition.API)
+					.addApi(LocationServices.API)
+					.addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+						private final Context c = context;
+						public void onConnected(Bundle p1) {
+							if (MapsActivity.active()) {
+								ApiService.startLocationUpdates(LocationRequest.PRIORITY_HIGH_ACCURACY, c);
+							}
+							if (MapsActivity.rl_remote()) {
+								ApiService.updateRecordLocation(c);
+							}
+							if (MapsActivity.ar_remote()) {
+								ApiService.updateActivityRecognition(c);
+							}
+						}
+
+						@Override
+						public void onConnectionSuspended(int p1) {
+							ApiService.reconnectClient();
+							// TODO: Implement this method
+						}
+					})
+					.addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+						@Override
+						public void onConnectionFailed(ConnectionResult p1) {
+							ApiService.reconnectClient();
+							// TODO: Implement this method
+						}
+					})
+					.build();
 		}
 		reconnectClient();
 	}
 
-	private void startActivityRecognition(int time){
-		ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(this.mClient, time, PendingIntent.getService(this, 0, new Intent(this, ActivityRecognitionSensor.class), PendingIntent.FLAG_UPDATE_CURRENT));
-	}
-
-	private void stopActivityRecognition(){
-		if(this.mClient.isConnected()){
-			ActivityRecognition.ActivityRecognitionApi.removeActivityUpdates(this.mClient, PendingIntent.getService(this, 0, new Intent(this, ActivityRecognitionSensor.class), PendingIntent.FLAG_UPDATE_CURRENT));
+	private static void startActivityRecognition(int time, Context context) {
+		if (client(context).isConnected()) {
+			ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(mClient, time, PendingIntent.getService(context, C.AR_ID, new Intent(context, ActivityRecognitionSensor.class), PendingIntent.FLAG_UPDATE_CURRENT));
+			buttonCheck(context, R.id.ACTIVITY_RECOGNITION);
 		}
 	}
 
-	private void startLocationUpdates(){
-		LocationServices.FusedLocationApi.requestLocationUpdates(this.mClient, this.location_req, location);// this.location);
-	}
-
-	private void stopLocationUpdates(){
-		if(this.mClient.isConnected()){
-			LocationServices.FusedLocationApi.removeLocationUpdates(this.mClient, this.location);
-		}
-		this.location = null;
-	}
-
-	private void startRecordLocation(){
-		LocationServices.FusedLocationApi.requestLocationUpdates(this.mClient, this.record_req, PendingIntent.getService(this, 0, new Intent(this, RecordLocationSensor.class), PendingIntent.FLAG_UPDATE_CURRENT));
-	}
-
-	private void stopRecordLocation(){
-		if(this.mClient.isConnected()){
-			LocationServices.FusedLocationApi.removeLocationUpdates(this.mClient, PendingIntent.getService(this, 0, new Intent(this, RecordLocationSensor.class), PendingIntent.FLAG_UPDATE_CURRENT));
+	private static void stopActivityRecognition(Context context) {
+		if (client(context).isConnected()) {
+			ActivityRecognition.ActivityRecognitionApi.removeActivityUpdates(mClient, PendingIntent.getService(context, C.AR_ID, new Intent(context, ActivityRecognitionSensor.class), PendingIntent.FLAG_NO_CREATE));
+			buttonCheck(context, R.id.ACTIVITY_RECOGNITION);
 		}
 	}
-	
-	private void data_uploaded(boolean success){
+
+	private static void startLocationUpdates(int priority, Context context) {
+		if (client(context).isConnected()) {
+			createLocationListener(context);
+			LocationRequest location_req = new LocationRequest();
+			location_req.setInterval(C.RL_TIME);
+			location_req.setFastestInterval(C.RL_FASTEST_TIME);
+			location_req.setPriority(priority);
+
+			LocationServices.FusedLocationApi.requestLocationUpdates(mClient, location_req, location);// this.location);
+		}
+	}
+
+	private static void stopLocationUpdates() {
+		if (mClient != null && mClient.isConnected()) {
+			LocationServices.FusedLocationApi.removeLocationUpdates(mClient, location);
+			RecordLocationSensor.saveSettings();
+			location = null;
+		}
+	}
+
+	private static void startRecordLocation(int priority, Context context) {
+		if (client(context).isConnected()) {
+			LocationRequest record_req = new LocationRequest();
+			record_req.setInterval(C.LU_TIME);
+			record_req.setFastestInterval(C.LU_FASTEST_TIME);
+			record_req.setPriority(priority);
+			LocationServices.FusedLocationApi.requestLocationUpdates(mClient, record_req, PendingIntent.getService(context, C.RL_ID, new Intent(context, RecordLocationSensor.class), PendingIntent.FLAG_UPDATE_CURRENT));
+			buttonCheck(context, R.id.RECORD_LOCATION);
+		}
+	}
+
+	private static void stopRecordLocation(Context context) {
+		if (client(context).isConnected()) {
+			LocationServices.FusedLocationApi.removeLocationUpdates(mClient, PendingIntent.getService(context, C.RL_ID, new Intent(context, RecordLocationSensor.class), PendingIntent.FLAG_NO_CREATE));
+			buttonCheck(context, R.id.RECORD_LOCATION);
+		}
+	}
+
+
+	private void corrected(boolean success) {
+		if (MapsActivity.active()) {
+			sendBroadcast(new Intent().setAction(C.CORRECT_TXT).putExtra(C.SUCCESS_TXT, success));
+		}
 		if(success) {
-			do_upload = false;
-			if (MainActivity.active) {
-				sendBroadcast(new Intent().setAction("DATA_UPLOADED"));
-			}
-			rl_sid = 0;
-			rl_latitude = 0;
-			rl_longitude = 0;
-			rl_time = 0;
-			Constants.writeFile(Constants.DATA_PATH, "", false);
-			Constants.writeFile(Constants.SETTINGS_PATH, "", false);
-		}
-		else{
-			if(MainActivity.active){
-				sendBroadcast(new Intent().setAction("UPLOAD_ERROR"));
-			}
+			startUpload();
+			buttonCheck(getApplicationContext(), R.id.CORRECT);
+		} else {
+			startCorrect();
 		}
 	}
 
-	private boolean loadSettings(String path){
-		boolean load = false;
-		File updateLog = new File(path);
-		try{
-			if(updateLog.exists()){
-				BufferedReader buf = new BufferedReader(new FileReader(updateLog));
-				String line;
-				String[] splitLine, splitSID, splitLat, splitLon, splitTime;
-				line = buf.readLine();
-				if(line != null && line.matches("[A-Z0-9.| ]*")){
-					splitLine = line.split("\\|");
-					splitSID = splitLine[0].split(" ");
-					splitLat = splitLine[1].split(" ");
-					splitLon = splitLine[2].split(" ");
-					splitTime = splitLine[3].split(" ");
-					if(splitSID[0].equals("SID")
-							&& splitLat[0].equals("LATITUDE")
-							&& splitLon[0].equals("LONGITUDE")
-							&& splitTime[0].equals("TIME")){
-						rl_sid = Integer.parseInt(splitSID[1]);
-						rl_latitude = Double.parseDouble(splitLat[1]);
-						rl_longitude = Double.parseDouble(splitLon[1]);
-						rl_time = Long.parseLong(splitTime[1]);
-						load = true;
-					}
-					else{
-						Log.i("ImportSettings","FILE LINE HAS DIFFERENT CONTENT");
-					}
-				}
-				else{
-					Log.i("ImportSettings","UNKNOWN LINE: "+line);
-
-
-				}
-
-				buf.close();
-
-			}
-		}
-		catch(ArrayIndexOutOfBoundsException e){
-			e.printStackTrace();
-		}
-		catch(IOException e){
-			e.printStackTrace();
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-		Log.i("ImportSettings", "load="+load);
-		return load;
-	}
-
-	@Override
-	public void onDestroy(){
-		Constants.writeFile(Constants.SETTINGS_PATH, "SID "+rl_sid+"|LATITUDE "+rl_latitude+"|LONGITUDE "+rl_longitude+"|TIME "+rl_time, false);
-		if(mClient.isConnected()) {
-			if (ar_is_active) {
-				stopActivityRecognition();
-			}
-			if(lu_is_active){
-				stopLocationUpdates();
-			}
-			if(rl_is_active){
-				stopRecordLocation();
-			}
-			mClient.disconnect();
-		}
-		super.onDestroy();
-	}
-
-	public class MainBinder extends Binder {
-		ApiService getService(){
-			return ApiService.this;
+	private void startCorrect(){
+		if (do_correct() && !Correct.correcting() && NetworkStateNotifier.available()) {
+			new Thread(new Correct(getApplicationContext())).start();
+			buttonCheck(getApplicationContext(), R.id.CORRECT);
 		}
 	}
 
-	@Override
-	public IBinder onBind(Intent p1)
-	{
-		return this.binder;
+	private void startUpload(){
+		if(!rl_is_active(getApplicationContext()) && !do_correct() && do_upload() && !Upload.uploading() && NetworkStateNotifier.available()){
+			new Thread(new Upload(getApplicationContext())).start();
+			buttonCheck(getApplicationContext(), R.id.UPLOAD);
+		}
 	}
-	private final IBinder binder = new MainBinder();
+
+	private void uploaded(boolean success){
+		if (MapsActivity.active()) {
+			sendBroadcast(new Intent().setAction(C.UPLOAD_TXT).putExtra(C.SUCCESS_TXT, success));
+		}
+		if(success){
+			buttonCheck(getApplicationContext(), R.id.UPLOAD);
+		}
+		else {
+			startUpload();
+		}
+	}
 }

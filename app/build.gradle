@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 22
-    buildToolsVersion "21.1.2"
+    buildToolsVersion "22.0.1"
 
     defaultConfig {
         applicationId "uppsala.biketracking"
@@ -10,11 +10,14 @@ android {
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file('api.properties').newDataInputStream())
+        resValue "string", "map_key", properties.getProperty('map.key')
+        resValue "string", "snap_key", properties.getProperty('snap.key')
     }
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
@@ -22,10 +25,12 @@ repositories {
     mavenCentral()
 }
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.2.0'
-    compile 'com.android.support:recyclerview-v7:22.2.0'
-    compile 'com.google.android.gms:play-services:8.3.0'
+    compile 'com.android.support:appcompat-v7:22.2.1'
+    compile 'com.android.support:recyclerview-v7:22.2.1'
+    compile 'com.google.android.gms:play-services:8.1.0'
     compile 'com.google.maps:google-maps-services:0.1.6'
-    compile 'com.google.maps.android:android-maps-utils:0.4+'
+    compile 'com.google.maps.android:android-maps-utils:0.4'
+    compile 'com.google.android.gms:play-services-ads:8.1.0'
+    compile 'com.google.android.gms:play-services-identity:8.1.0'
+    compile 'com.google.android.gms:play-services-gcm:8.1.0'
 }

@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="CustomWindowTitleBackground">
+        <item name="android:background">#323331</item>
+    </style>
+
     <style name="AppTheme" parent="android:Theme">
-	</style>
+        <item name="android:windowTitleSize">90dp</item>
+        <item name="android:windowTitleBackgroundStyle">@style/CustomWindowTitleBackground</item>
+    </style>
 </resources>

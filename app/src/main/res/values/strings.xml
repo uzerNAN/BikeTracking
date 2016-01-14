@@ -1,6 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">BikeTracking</string>
     <string name="title_activity_tracking">Bike Tracking Map</string>
 	<string name="hello_world">Hello fellow</string>
-	<string name="local_service_started">Backround service is up</string>
+	<string name="local_service_started">Background service is up</string>
+	<string name="the_map_key">@string/map_key</string>
+	<string name="the_snap_key">@string/snap_key</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="wait">Wait..</string>
+    <string name="no_correct">Correct No data</string>
+    <string name="no_upload">Upload No data</string>
 </resources>

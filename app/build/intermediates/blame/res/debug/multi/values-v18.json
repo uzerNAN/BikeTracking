@@ -1,29 +1,5 @@
 [
     {
-        "outputFile": "C:\\Users\\Unknown\\AndroidStudioProjects\\BikeTracking\\app\\build\\intermediates\\res\\merged\\debug\\values-v18\\values-v18.xml",
-        "map": [
-            {
-                "to": {
-                    "startLine": 2,
-                    "startColumn": 4,
-                    "startOffset": 55,
-                    "endColumn": 48,
-                    "endOffset": 99
-                },
-                "from": {
-                    "file": "C:\\Users\\Unknown\\AndroidStudioProjects\\BikeTracking\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.0\\res\\values-v18\\values-v18.xml",
-                    "position": {
-                        "startLine": 4,
-                        "startColumn": 4,
-                        "startOffset": 291,
-                        "endColumn": 48,
-                        "endOffset": 335
-                    }
-                }
-            }
-        ]
-    },
-    {
         "outputFile": "C:\\Users\\Sergej\\AndroidStudioProjects\\BikeTracking\\app\\build\\intermediates\\res\\merged\\debug\\values-v18\\values-v18.xml",
         "map": [
             {
@@ -35,7 +11,7 @@
                     "endOffset": 99
                 },
                 "from": {
-                    "file": "C:\\Users\\Sergej\\AndroidStudioProjects\\BikeTracking\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.0\\res\\values-v18\\values-v18.xml",
+                    "file": "C:\\Users\\Sergej\\AndroidStudioProjects\\BikeTracking\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.1\\res\\values-v18\\values-v18.xml",
                     "position": {
                         "startLine": 4,
                         "startColumn": 4,
