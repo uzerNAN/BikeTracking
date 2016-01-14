@@ -1,31 +1,83 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="30dp"
-    android:orientation="horizontal"
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
 	android:gravity="center_horizontal"
-    android:id="@+id/coordinates"
-	android:background="@drawable/icon_transparent"
-	>
-	<TextView 
-		android:layout_height="match_parent" 
-		android:layout_width="wrap_content" 
-		android:id="@+id/latitude" 
-		android:layout_marginRight="2dp" 
-		android:textColor="@color/white"
-		android:background="@color/black"
-		/>
-	<TextView android:layout_height="match_parent" 
-		android:layout_width="wrap_content" 
-		android:id="@+id/longtitude" 
-		android:layout_marginLeft="2dp"
-		android:textColor="@color/white"
-		android:background="@color/black"
-		/>
-	<!-- <AutoCompleteTextView
-		android:id="@+id/editloc"
-		android:layout_gravity="center" 
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:inputType="textAutoComplete|textAutoCorrect">   
-	</AutoCompleteTextView> -->
+	android:layout_height="90dip">
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="30dip"
+		android:orientation="horizontal"
+		android:gravity="center_horizontal"
+		android:id="@+id/coordinates"
+		android:background="@drawable/icon_transparent"
+		>
+
+		<TextView
+			android:layout_height="match_parent"
+			android:layout_width="wrap_content"
+			android:id="@+id/latitude"
+			android:layout_marginRight="1dip"
+			android:textColor="@color/white"
+			android:background="@color/black"
+			/>
+		<TextView android:layout_height="match_parent"
+			android:layout_width="wrap_content"
+			android:id="@+id/longtitude"
+			android:layout_marginLeft="1dip"
+			android:textColor="@color/white"
+			android:background="@color/black"
+			/>
+	</LinearLayout>
+
+	<HorizontalScrollView
+		android:layout_width="match_parent"
+		android:layout_height="60dip"
+		android:id="@+id/horizontalScrollView"
+		android:background="@color/transparent">
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:orientation="horizontal"
+			>
+
+			<Button
+				android:layout_width="65dip"
+				android:layout_height="match_parent"
+				android:text="@string/wait"
+				android:textColor="@color/gray"
+				android:id="@+id/ACTIVITY_RECOGNITION"
+				android:enabled="false"
+				android:onClick="do_ar" />
+
+			<Button
+				android:layout_width="65dip"
+				android:layout_height="match_parent"
+				android:text="@string/wait"
+				android:textColor="@color/gray"
+				android:id="@+id/RECORD_LOCATION"
+				android:enabled="false"
+				android:onClick="do_rl"/>
+
+			<Button
+				android:layout_width="80dip"
+				android:layout_height="match_parent"
+				android:text="@string/no_correct"
+				android:textColor="@color/gray"
+				android:id="@+id/CORRECT"
+				android:enabled="false"
+				android:onClick="do_correct"/>
+
+			<Button
+				android:layout_width="80dip"
+				android:layout_height="match_parent"
+				android:text="@string/no_upload"
+				android:textColor="@color/gray"
+				android:id="@+id/UPLOAD"
+				android:enabled="false"
+				android:onClick="do_upload"/>
+
+		</LinearLayout>
+	</HorizontalScrollView>
+
+
 </LinearLayout>

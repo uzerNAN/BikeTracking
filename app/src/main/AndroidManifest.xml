@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="uppsala.biketracking" >
+    xmlns:tools="http://schemas.android.com/tools"
+    package="uppsala.biketracking">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <!--
@@ -13,98 +14,89 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-	<uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
-	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-	<uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
-		
+        android:configChanges="keyboardHidden|orientation|screenSize"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-		android:configChanges="keyboardHidden|orientation|screenSize"
-		>
-
-        <receiver android:name=".PowerSavingSync"
-            android:exported="false"
-            android:enabled="true" >
+        android:theme="@style/AppTheme">
+        <receiver
+            android:name=".PowerSavingSync"
+            android:enabled="true"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.ACTION_EXTERNAL_APPLICATIONS_AVAILABLE"/>
-                <action android:name="android.intent.action.ACTION_BATTERY_LOW"/>
-                <action android:name="android.intent.action.ACTION_BATTERY_OKAY"/>
+                <action android:name="android.intent.action.ACTION_EXTERNAL_APPLICATIONS_AVAILABLE" />
+                <action android:name="android.intent.action.ACTION_BATTERY_LOW" />
+                <action android:name="android.intent.action.ACTION_BATTERY_OKAY" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".NetworkStateNotifier">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="uppsala.biketracking.NetworkStateNotifier" />
             </intent-filter>
         </receiver>
 
         <service
             android:name=".PowerSavingModule"
-            android:exported="false"
-            android:enabled="true">
+            android:enabled="true"
+            android:exported="false">
             <intent-filter>
                 <action android:name="BATTERY_CHECK" />
-                <action android:name="uppsala.biketracking.PowerSavingModule" />
             </intent-filter>
         </service>
-		
-<<<<<<< HEAD
-		<service
-			android:name=".ActivityRecognitionSensor"
-			android:exported="false"
-			android:enabled="true">
-			<intent-filter>
-				<action android:name="uppsala.biketracking.ActivityRecognitionSensor" />
-			</intent-filter>
-		</service>
-		
-		<service
-			android:name=".RecordLocationSensor"
-			android:exported="false"
-			android:enabled="true">
-			<intent-filter>
-				<action android:name="uppsala.biketracking.RecordLocationSensor" />
-			</intent-filter>
-		</service>
-
         <service
-			android:name=".ApiService"
-			android:exported="false"
-			android:enabled="true">
-			<intent-filter>
-				<action android:name="START_RL" />
-				<action android:name="STOP_RL" />
-                <action android:name="START_AR" />
-                <action android:name="STOP_AR" />
-                <action android:name="START_LU" />
-                <action android:name="STOP_LU" />
-                <action android:name="LAST_DATA" />
-			</intent-filter>
-=======
-		<service
-			android:name="uppsala.biketracking.MainService"
-			android:exported="false"
-			android:enabled="true">
-				<intent-filter>
-					<action android:name="uppsala.biketracking.MainService" />
-					<action android:name="ACTIVITY_DATA" />
-					<action android:name="SERVICE_START" />
-					<action android:name="SERVICE_STOP" />
-				</intent-filter>
->>>>>>> 1c7e6ede957a0568ccbc3727d024ac021bff0e5e
-		</service>
-		
-		
+            android:name=".ActivityRecognitionSensor"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="uppsala.biketracking.ActivityRecognitionSensor" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".RecordLocationSensor"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="uppsala.biketracking.RecordLocationSensor" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".ApiService"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="CHECK_BATTERY_STATE" />
+                <action android:name="NETWORK_NOTIFICATION" />
+                <action android:name="ACTIVITY_RECOGNITION" />
+                <action android:name="LOCATION_UPDATES" />
+                <action android:name="RECORD_LOCATION" />
+                <action android:name="CORRECT" />
+                <action android:name="UPLOAD" />
+            </intent-filter>
+        </service>
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/AIzaSyD5Juo350_K2EEZcmijYvL40MHRaZVA2_A" />
+            tools:replace="android:value"
+            android:value="@string/the_map_key" />
+        <meta-data
+            android:name="SNAP_API"
+            tools:replace="android:value"
+            android:value="@string/the_snap_key" />
 
         <activity
-            android:name=".MainActivity"
-            android:label="@string/title_activity_tracking" >
-			<uses-library android:name="com.google.android.maps" />
+            android:name=".MapsActivity"
+            android:label="@string/title_activity_maps">
+            <uses-library android:name="com.google.android.maps" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
