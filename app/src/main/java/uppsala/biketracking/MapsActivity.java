@@ -115,7 +115,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 							break;
 						case (C.UPDATE_BUTTON_TXT) :
 							MapsActivity.this.set_ba(intent.getIntExtra(C.BUTTON_TXT, 0));
-							Toast.makeText(context, C.OK_TXT+33, Toast.LENGTH_SHORT).show();
+							//Toast.makeText(context, C.OK_TXT+33, Toast.LENGTH_SHORT).show();
                         default:
                             break;
                     }
@@ -194,12 +194,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 	public void do_ar (View view) {
 		view.setEnabled(false);
 		activityRecognition(!(ApiService.ar_is_active()));
-		Toast.makeText(this, C.OK_TXT+C.SPACE+12+ApiService.ar_is_active(), Toast.LENGTH_SHORT).show();
+		//Toast.makeText(this, C.OK_TXT+C.SPACE+12+ApiService.ar_is_active(), Toast.LENGTH_SHORT).show();
 	}
 	public void do_rl (View view){
 		view.setEnabled(false);
 		recordLocation(!(ApiService.rl_is_active()));
-		Toast.makeText(this, C.OK_TXT+C.SPACE+22+ApiService.rl_is_active(), Toast.LENGTH_SHORT).show();
+		//Toast.makeText(this, C.OK_TXT+C.SPACE+22+ApiService.rl_is_active(), Toast.LENGTH_SHORT).show();
 	}
 
 	public void do_correct (View view){
@@ -225,10 +225,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 			ar_remote = start;
 			this.startService((new Intent(this, ApiService.class).setAction(C.ACTIVITY_RECOGNITION_TXT).putExtra(C.START_TXT, start)));
 
-			Toast.makeText(this, C.OK_TXT+C.SPACE+11, Toast.LENGTH_SHORT).show();
-		} else {
-			Toast.makeText(this, C.NOT_OK_TXT+C.SPACE+11, Toast.LENGTH_SHORT).show();
-		}
+			//Toast.makeText(this, C.OK_TXT+C.SPACE+11, Toast.LENGTH_SHORT).show();
+		} //else {
+		//	Toast.makeText(this, C.NOT_OK_TXT+C.SPACE+11, Toast.LENGTH_SHORT).show();
+		//}
 	}
 
 	private void locationUpdates(boolean start){
@@ -241,9 +241,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 		if(start != (ApiService.rl_is_active())) {
 			rl_remote = start;
 			this.startService(new Intent(this, ApiService.class).setAction(C.RECORD_LOCATION_TXT).putExtra(C.START_TXT, start));
-			Toast.makeText(this, C.OK_TXT+C.SPACE+21, Toast.LENGTH_SHORT).show();
+			//Toast.makeText(this, C.OK_TXT+C.SPACE+21, Toast.LENGTH_SHORT).show();
 		} else {
-			Toast.makeText(this, C.NOT_OK_TXT+C.SPACE+21, Toast.LENGTH_SHORT).show();
+			//Toast.makeText(this, C.NOT_OK_TXT+C.SPACE+21, Toast.LENGTH_SHORT).show();
 		}
 	}
 

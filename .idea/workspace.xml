@@ -10,57 +10,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="14ddb63d-e15f-4bd2-92f6-78592bdc2405" name="Default" comment="">
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\android_maps_utils_0_4.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\appcompat_v7_22_2_1.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\google_maps_services_0_1_6.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\gson_2_3_1.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\joda_time_2_4.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\mediarouter_v7_22_2_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\okhttp_2_0_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\okio_1_0_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\play_services_8_1_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\play_services_ads_8_1_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\play_services_analytics_8_1_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\play_services_appindexing_8_1_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\play_services_appinvite_8_1_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\play_services_appstate_8_1_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\play_services_base_8_1_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\play_services_basement_8_1_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\play_services_cast_8_1_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\play_services_drive_8_1_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\play_services_fitness_8_1_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\play_services_games_8_1_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\play_services_gcm_8_1_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\play_services_identity_8_1_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\play_services_location_8_1_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\play_services_maps_8_1_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\play_services_measurement_8_1_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\play_services_nearby_8_1_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\play_services_panorama_8_1_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\play_services_plus_8_1_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\play_services_safetynet_8_1_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\play_services_vision_8_1_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\play_services_wallet_8_1_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\play_services_wearable_8_1_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\recyclerview_v7_22_2_1.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\support_annotations_22_2_1.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\.idea\libraries\support_v4_22_2_1.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\app\build\intermediates\classes\debug\uppsala\biketracking\PlacesAutoCompleteAdapter.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Sergej\AndroidStudioProjects\BikeTracking\app\src\main\java\uppsala\biketracking\PlacesAutoCompleteAdapter.java" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/ActivityRecognitionSensor.class" afterPath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/ActivityRecognitionSensor.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/ApiService$1.class" afterPath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/ApiService$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/ApiService$2.class" afterPath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/ApiService$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/ApiService$3.class" afterPath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/ApiService$3.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/ApiService.class" afterPath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/ApiService.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/C.class" afterPath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/C.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/CollectedData.class" afterPath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/CollectedData.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/Correct.class" afterPath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/Correct.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/Data.class" afterPath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/Data.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/MapsActivity$1.class" afterPath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/MapsActivity$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/MapsActivity$2.class" afterPath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/MapsActivity$2.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/MapsActivity.class" afterPath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/MapsActivity.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/RecordLocationSensor.class" afterPath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/RecordLocationSensor.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/Upload.class" afterPath="$PROJECT_DIR$/app/build/intermediates/classes/debug/uppsala/biketracking/Upload.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/build/outputs/apk/app-debug-unaligned.apk" afterPath="$PROJECT_DIR$/app/build/outputs/apk/app-debug-unaligned.apk" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/build/outputs/apk/app-debug.apk" afterPath="$PROJECT_DIR$/app/build/outputs/apk/app-debug.apk" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/cache.properties.lock" afterPath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/cache.properties.lock" />
@@ -68,17 +19,8 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/build/intermediates/pre-dexed/debug/debug_f8d74390c95219666a0609f7f2e36c6592e3e807.jar" afterPath="$PROJECT_DIR$/app/build/intermediates/pre-dexed/debug/debug_f8d74390c95219666a0609f7f2e36c6592e3e807.jar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/fileHashes.bin" afterPath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/fileHashes.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/fileSnapshots.bin" afterPath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/fileSnapshots.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/outputFileStates.bin" afterPath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/outputFileStates.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/taskArtifacts.bin" afterPath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/taskArtifacts.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/ActivityRecognitionSensor.java" afterPath="$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/ActivityRecognitionSensor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/ApiService.java" afterPath="$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/ApiService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/C.java" afterPath="$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/C.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/CollectedData.java" afterPath="$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/CollectedData.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/Correct.java" afterPath="$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/Correct.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/Data.java" afterPath="$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/Data.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/MapsActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/MapsActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/RecordLocationSensor.java" afterPath="$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/RecordLocationSensor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/Upload.java" afterPath="$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/Upload.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="BikeTracking.iws" />
@@ -129,11 +71,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MapsActivity.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="MapsActivity.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/MapsActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-21.724138">
-              <caret line="336" column="51" selection-start-line="336" selection-start-column="51" selection-end-line="336" selection-end-column="51" />
+            <state vertical-scroll-proportion="0.5707763">
+              <caret line="265" column="29" selection-start-line="265" selection-start-column="29" selection-end-line="265" selection-end-column="29" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -198,10 +140,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ActivityRecognitionSensor.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ActivityRecognitionSensor.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/ActivityRecognitionSensor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.96118724">
+            <state vertical-scroll-proportion="0.0">
               <caret line="32" column="48" selection-start-line="32" selection-start-column="48" selection-end-line="32" selection-end-column="48" />
               <folding />
             </state>
@@ -2109,8 +2051,8 @@
         <option value="$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/Upload.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/Correct.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/CollectedData.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/MapsActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/ActivityRecognitionSensor.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/MapsActivity.java" />
       </list>
     </option>
   </component>
@@ -2738,7 +2680,7 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32952926" sideWeight="0.48959687" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32684284" sideWeight="0.5681234" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3352354" sideWeight="0.42522758" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3352354" sideWeight="0.42522758" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962447" sideWeight="0.49481866" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -3169,16 +3111,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/MapsActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-21.724138">
-          <caret line="336" column="51" selection-start-line="336" selection-start-column="51" selection-end-line="336" selection-end-column="51" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/CollectedData.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -3204,9 +3136,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/ActivityRecognitionSensor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.96118724">
+        <state vertical-scroll-proportion="0.0">
           <caret line="32" column="48" selection-start-line="32" selection-start-column="48" selection-end-line="32" selection-end-column="48" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/uppsala/biketracking/MapsActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5707763">
+          <caret line="265" column="29" selection-start-line="265" selection-start-column="29" selection-end-line="265" selection-end-column="29" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
