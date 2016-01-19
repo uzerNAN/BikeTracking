@@ -77,13 +77,13 @@ public class Data implements Serializable
 			 + C.JSON_STR_OBJ_END;
 	}
 
-	public String toFileString(String add){
+	public String toFileString(){
 		return 	  C.SID_TXT + C.SPACE + SID + C.SPLIT
 				+ C.LAT_TXT + C.SPACE + LATITUDE + C.SPLIT
 				+ C.LON_TXT + C.SPACE + LONGITUDE + C.SPLIT
 				+ C.TIME_TXT + C.SPACE + TIME + C.SPLIT
 				+ C.SPEED_TXT + C.SPACE + SPEED + C.SPLIT
-				+ C.ACCURACY_TXT + C.SPACE + ACCURACY + add;
+				+ C.ACCURACY_TXT + C.SPACE + ACCURACY;
 	}
 
 	//@Override

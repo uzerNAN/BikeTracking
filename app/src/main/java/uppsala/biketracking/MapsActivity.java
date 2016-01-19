@@ -89,6 +89,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 							} else {
 								Toast.makeText(context, C.ERROR_UPLOAD_TXT, Toast.LENGTH_LONG).show();
 							}
+							MapsActivity.this.set_ba(R.id.UPLOAD);
                             break;
                         case (C.CORRECT_TXT):
 							if(intent.getBooleanExtra(C.SUCCESS_TXT, false)) {
@@ -96,6 +97,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 							} else {
 								Toast.makeText(context, C.ERROR_CORRECT_TXT, Toast.LENGTH_SHORT).show();
 							}
+							MapsActivity.this.set_ba(R.id.CORRECT);
                             break;
                         case (C.FILE_ERROR_TXT):
                             Toast.makeText(context, C.ERROR_FILE_TXT, Toast.LENGTH_LONG).show();
@@ -158,14 +160,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 		switch(id) {
 			case R.id.ACTIVITY_RECOGNITION :
-				a = !(ApiService.ar_is_active(getApplicationContext()));
+				a = !(ApiService.ar_is_active());
 				ar.setText(a ? C.Start_AR_TXT : C.Stop_AR_TXT);
 				if(!ar.isEnabled()){
 					ar.setEnabled(true);
 				}
 				break;
 			case R.id.RECORD_LOCATION :
-				a = !(ApiService.rl_is_active(getApplicationContext()));
+				a = !(ApiService.rl_is_active());
 				ar.setText(a ? C.Start_RL_TXT : C.Stop_RL_TXT);
 				if(!ar.isEnabled()){
 					ar.setEnabled(true);
@@ -191,19 +193,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 	public void do_ar (View view) {
 		view.setEnabled(false);
-		activityRecognition(!(ApiService.ar_is_active(getApplicationContext())));
-		Toast.makeText(this, C.OK_TXT+C.SPACE+12+ApiService.ar_is_active(getApplicationContext()), Toast.LENGTH_SHORT).show();
+		activityRecognition(!(ApiService.ar_is_active()));
+		Toast.makeText(this, C.OK_TXT+C.SPACE+12+ApiService.ar_is_active(), Toast.LENGTH_SHORT).show();
 	}
 	public void do_rl (View view){
 		view.setEnabled(false);
-		recordLocation(!(ApiService.rl_is_active(getApplicationContext())));
-		Toast.makeText(this, C.OK_TXT+C.SPACE+22+ApiService.rl_is_active(getApplicationContext()), Toast.LENGTH_SHORT).show();
+		recordLocation(!(ApiService.rl_is_active()));
+		Toast.makeText(this, C.OK_TXT+C.SPACE+22+ApiService.rl_is_active(), Toast.LENGTH_SHORT).show();
 	}
 
 	public void do_correct (View view){
 		view.setEnabled(false);
 		if (ApiService.do_correct() && !(Correct.correcting()) && NetworkStateNotifier.available()) {
-			new Thread(new Correct(getApplicationContext())).start();
+			startService(new Intent(getApplicationContext(), ApiService.class).setAction(C.CORRECT_TXT).putExtra(C.START_TXT, true));
 		} else if (!(NetworkStateNotifier.available())) {
 			Toast.makeText(getApplicationContext(), C.CONNECTION_UNAVAILABLE_TXT, Toast.LENGTH_LONG).show();
 		}
@@ -212,14 +214,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 	public void do_upload (View view){
 		view.setEnabled(false);
 		if (ApiService.do_upload() && !(Upload.uploading()) && NetworkStateNotifier.available()) {
-			new Thread(new Upload(getApplicationContext())).start();
+			startService(new Intent(getApplicationContext(), ApiService.class).setAction(C.UPLOAD_TXT).putExtra(C.START_TXT, true));
 		} else if (!(NetworkStateNotifier.available())) {
 			Toast.makeText(getApplicationContext(), C.CONNECTION_UNAVAILABLE_TXT, Toast.LENGTH_LONG).show();
 		}
 	}
 	
 	private void activityRecognition(boolean start){
-		if(start != (ApiService.ar_is_active(getApplicationContext()))){
+		if(start != (ApiService.ar_is_active())){
 			ar_remote = start;
 			this.startService((new Intent(this, ApiService.class).setAction(C.ACTIVITY_RECOGNITION_TXT).putExtra(C.START_TXT, start)));
 
@@ -236,7 +238,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 	}
 
 	private void recordLocation(boolean start){
-		if(start != (ApiService.rl_is_active(getApplicationContext()))) {
+		if(start != (ApiService.rl_is_active())) {
 			rl_remote = start;
 			this.startService(new Intent(this, ApiService.class).setAction(C.RECORD_LOCATION_TXT).putExtra(C.START_TXT, start));
 			Toast.makeText(this, C.OK_TXT+C.SPACE+21, Toast.LENGTH_SHORT).show();

@@ -25,12 +25,12 @@ public class ActivityRecognitionSensor extends IntentService
 
 			switch(type){
 				case DetectedActivity.ON_BICYCLE :
-					if(!ApiService.rl_is_active(getApplicationContext())) {
+					if(!ApiService.rl_is_active()) {
 						startRecordLocation(true);
 					}
 					break;
 				default :
-					if (ApiService.rl_is_active(getApplicationContext()) && !MapsActivity.rl_remote()) {
+					if (ApiService.rl_is_active() && !MapsActivity.rl_remote()) {
 						startRecordLocation(false);
 					}
 					break;

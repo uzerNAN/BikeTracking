@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -24,7 +25,7 @@ import org.json.JSONObject;
 
 public class Correct implements Runnable
 {
-    private static boolean correcting = false;
+    //private static boolean correcting = false;
     private final CollectedData raw;
     private static Context context = null;
     private String KEY;
@@ -45,7 +46,7 @@ public class Correct implements Runnable
                             PackageManager.GET_META_DATA);
             Bundle bundle = applicationInfo.metaData;
             KEY = bundle.getString(C.SNAP_API_TXT);
-            Log.i(C.SNAP_API_TXT, KEY);
+            //Log.i("uppsala.biketracking", KEY);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();  //Do something more useful here!
         }
@@ -65,18 +66,24 @@ public class Correct implements Runnable
                 String output = C.EMPTY, line;
                 URL url = new URL(C.CORRECT_URL + C.Q + C.path_TXT + C.EQ + points + C.AND + C.interpolate_TXT + C.EQ + C.false_TXT + C.AND + C.key_TXT + C.EQ + THE_KEY());
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                InputStreamReader reader = new InputStreamReader(connection.getInputStream());
-                BufferedReader in = new BufferedReader(reader);
-                while ((line = in.readLine()) != null) {
-                    output += line;
-                }
+                //connection.connect();
+                InputStream input = connection.getInputStream();
+                //Log.i("uppsala.biketracking","points : "+points);
+                //Log.i("uppsala.biketracking","input != null : "+(input != null));
+                if(input != null) {
+                    InputStreamReader reader = new InputStreamReader(input);
+                    BufferedReader in = new BufferedReader(reader);
+                    while ((line = in.readLine()) != null) {
+                        output += line;
+                    }
 
-                in.close();
-                //out.close();
+                    in.close();
+                    //out.close();
+                    //Log.i("uppsala.biketracking","!output.equals(C.JSON_EMPTY) : "+!output.equals(C.JSON_EMPTY));
 
-                if (!output.equals(C.EMPTY)) {
                     JSONObject out = new JSONObject(output);
                     //JSONArray point;
+                    //Log.i("uppsala.biketracking","output : " + output + "\nJSONString : " + out.toString());
                     if (out.has(C.snappedPoints_TXT)) {
                         JSONArray elems = out.getJSONArray(C.snappedPoints_TXT);
 
@@ -89,19 +96,24 @@ public class Correct implements Runnable
                                             point.getDouble(C.longitude_TXT),
                                             elem.getString(C.placeId_TXT));
                         }
-                        String path;
-                        if (Upload.uploading()) {
-                            path = C.WAITING_CORRECTED_DATA;
-                        } else {
-                            path = C.CORRECTED_DATA;
-                            C.appendFileTo(C.WAITING_CORRECTED_DATA, C.CORRECTED_DATA);
-                        }
-                        C.writeFile(path, raw.dataToFileString(true), true);
-                        raw.resetData();
-                        result = true;
                     }
+                    String path;
+                    if (Upload.uploading()) {
+                        path = C.WAITING_CORRECTED_DATA;
+                    } else {
+                        path = C.CORRECTED_DATA;
+                        C.appendFileTo(C.WAITING_CORRECTED_DATA, C.CORRECTED_DATA);
+                    }
+                    if (!output.equals(C.JSON_EMPTY)) {
+                        C.writeFile(path, raw.dataToFileString(true), true);
+                    } //else {
+                     // RecordLocationSensor.resetSettings();
+                    //}
+                    raw.resetData();
+                    result = true;
                 }
             } catch (Exception e) {
+                //Log.e("uppsala.biketracking", "EXCEPTION");
                 e.printStackTrace();
             }
         }
@@ -118,7 +130,7 @@ public class Correct implements Runnable
                 BufferedReader buf = new BufferedReader(new FileReader(updateLog));
                 String[] splitLine, splitSID, splitLatitude, splitLongitude, splitTime, splitSpeed, splitAccuracy;
                 while ((line = buf.readLine()) != null && result) {
-                    if (line.matches(C.MATCH_SYMBOLS)) {
+                    if (!line.equals(C.EMPTY) && line.matches(C.MATCH_SYMBOLS)) {
                         splitLine = line.split("\\|");
                         splitSID = splitLine[0].split(C.SPACE);
                         splitLatitude = splitLine[1].split(C.SPACE);
@@ -157,6 +169,10 @@ public class Correct implements Runnable
             }
         }
         catch(IOException e){
+            e.printStackTrace();
+            result = false;
+        }
+        catch(NullPointerException e){
             e.printStackTrace();
             result = false;
         }

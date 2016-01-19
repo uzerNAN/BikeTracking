@@ -77,17 +77,17 @@ public class CollectedData
 			for(int i = size-1; i >= (size-last); i--){
 				if(finalization){
 					finalization = this.data.get(i).finalization();
-					if(!finalization){
-						Log.i("RemoveLastUpdate", "UNABLE TO FINALIZE DATA OBJECT, STOPPING FINALIZING, ONLY REMOVE FROM LISTS");
-					}
+					//if(!finalization){
+					//	Log.i("RemoveLastUpdate", "UNABLE TO FINALIZE DATA OBJECT, STOPPING FINALIZING, ONLY REMOVE FROM LISTS");
+					//}
 				}
 				this.data.remove(i);
 			}
-			Log.i("RemoveLastUpdate","SUCCESSFULLY REMOVED "+last+" LAST OBJECTS FROM LISTS; finalization="+finalization);
+			//Log.i("RemoveLastUpdate","SUCCESSFULLY REMOVED "+last+" LAST OBJECTS FROM LISTS; finalization="+finalization);
 		}
-		else{
-			Log.i("RemoveLastUpdate","FAIL: last="+last+", data.size="+data.size());
-		}
+		//else{
+		//	Log.i("RemoveLastUpdate","FAIL: last="+last+", data.size="+data.size());
+		//}
 	}
 	
 	public boolean importFile(String path, boolean corrected){
@@ -170,7 +170,7 @@ public class CollectedData
 				if(corrected){
 					pid = C.SPLIT + data.get(i).getPID();
 				}
-				result += data.get(i).toFileString(pid + C.NEW_LINE);
+				result += (data.get(i).toFileString() + pid + C.NEW_LINE);
 			}
 		}
 		return result;

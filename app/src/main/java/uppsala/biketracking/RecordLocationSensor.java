@@ -138,13 +138,13 @@ public class RecordLocationSensor extends IntentService
 	public static void flush_buffer(){
 		if(buf_i > 0) {
 			String flush = C.EMPTY;
-			for (int i = 0; i <= buf_i; i++) {
+			for (int i = 0; i < buf_i; i++) {
 				if(buffer[i].getTime() != 0) {
-					flush += buffer[i].toFileString(C.NEW_LINE);
+					flush += (buffer[i].toFileString() + C.NEW_LINE);
 				}
 			}
 			C.writeFile(C.RAW_DATA, flush, true);
-			last_flush = buf_i;
+			last_flush = buf_i-1;
 			buf_i = 0;
 		}
 	}

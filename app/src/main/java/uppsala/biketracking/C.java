@@ -101,6 +101,7 @@ public class C {
     public static final String JSON_LIST_COMMA = ",";
     public static final String JSON_LIST_START = "[";
     public static final String JSON_LIST_END = "]";
+    public static final String JSON_EMPTY = "{}";
     public static final String data_TXT = "data";
     public static final String EMPTY = "";
     public static final String NETWORK_NOTIFICATION_TXT = "NETWORK_NOTIFICATION";
@@ -144,14 +145,14 @@ public class C {
     public static final String Start_RL_TXT = "Start RL";
     public static final String Stop_RL_TXT = "Stop RL";
     public static final String Correct_ON_TXT = "Correct ON";
-    public static final String Correct_The_Data_TXT = "Correct The Data";
+    public static final String Correct_The_Data_TXT = "Correct Data";
     public static final String Upload_ON_TXT = "Upload ON";
-    public static final String Upload_The_Data_TXT = "Upload The Data";
+    public static final String Upload_The_Data_TXT = "Upload Data";
     public static final String CONNECTION_UNAVAILABLE_TXT = "CONNECTION UNAVAILABLE";
     public static final String UPDATE_BUTTON_TXT = "UPDATE_BUTTON";
     public static final String BUTTON_TXT = "BUTTON";
     public static final String NOT_OK_TXT = "NOT OK";
-    public static final String NO_PID = "NO PID";
+    public static final String NO_PID = "NO_PID";
     public static final String _TXT = "";
 
     public static File getSaveDirectory(){
