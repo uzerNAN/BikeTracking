@@ -9,7 +9,7 @@
 		android:orientation="horizontal"
 		android:gravity="center_horizontal"
 		android:id="@+id/coordinates"
-		android:background="@drawable/icon_transparent"
+		android:background="@color/transparent"
 		>
 
 		<TextView

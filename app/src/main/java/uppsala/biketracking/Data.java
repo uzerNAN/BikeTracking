@@ -9,20 +9,16 @@ public class Data implements Serializable
 	private int SID;
 	private double LATITUDE, LONGITUDE;
 	private long TIME;
-	private float ACCURACY;
-	private float SPEED;
-	private String placeId;
+	private float ACCURACY, SPEED;
+	private int placeId;
 
-	public Data(){ set(0,0,0,0,0,0, C.EMPTY); }
+	public Data(){ set(0,0,0,0,0,0); }
 
 	public Data(int sid, double latitude, double longitude, long time, float speed, float accuracy){
-		set(sid, latitude, longitude, time, speed, accuracy, C.EMPTY);
+		set(sid, latitude, longitude, time, speed, accuracy);
 	}
-	public Data(int sid, double latitude, double longitude, long time, float speed, float accuracy, String pid){
-		set(sid, latitude, longitude, time, speed, accuracy, pid);
-	}
-	public void set(int sid, double latitude, double longitude, long time, float speed, float accuracy, String pid) {
-		SID = sid; LATITUDE = latitude; LONGITUDE = longitude; TIME = time; SPEED = speed; ACCURACY = accuracy; placeId = pid;
+	public void set(int sid, double latitude, double longitude, long time, float speed, float accuracy) {
+		SID = sid; LATITUDE = latitude; LONGITUDE = longitude; TIME = time; SPEED = speed; ACCURACY = accuracy;
 	}
 	public int getSID(){
 		return SID;
@@ -42,12 +38,13 @@ public class Data implements Serializable
 	public float getAccuracy(){
 		return ACCURACY;
 	}
-	public String getPID(){
+	public int getPID(){
 		return placeId;
 	}
 
-	public void correct(double lat, double lon, String pi){
+	public Data correct(double lat, double lon, int pi){
 		LATITUDE = lat; LONGITUDE = lon; placeId = pi;
+		return this;
 	}
 
 	@Override
@@ -83,7 +80,7 @@ public class Data implements Serializable
 				+ C.LON_TXT + C.SPACE + LONGITUDE + C.SPLIT
 				+ C.TIME_TXT + C.SPACE + TIME + C.SPLIT
 				+ C.SPEED_TXT + C.SPACE + SPEED + C.SPLIT
-				+ C.ACCURACY_TXT + C.SPACE + ACCURACY;
+				+ C.ACCURACY_TXT + C.SPACE + ACCURACY + C.NEW_LINE;
 	}
 
 	//@Override

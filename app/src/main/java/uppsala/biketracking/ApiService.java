@@ -48,7 +48,7 @@ public class ApiService extends IntentService {
 	}
 
 	public static boolean do_upload(){
-		return (new File(C.getSaveDirectory(), C.CORRECTED_DATA).exists());
+		return (new File(C.getSaveDirectory(), C.CORRECTED_RANGES).exists());
 	}
 
 	public static boolean do_correct(){

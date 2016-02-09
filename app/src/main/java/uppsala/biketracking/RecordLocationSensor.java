@@ -63,7 +63,7 @@ public class RecordLocationSensor extends IntentService
 								Integer.parseInt(splitSID[1]) ,
 								Double.parseDouble(splitLat[1]) ,
 								Double.parseDouble(splitLon[1]) ,
-								Long.parseLong(splitTime[1]) , 0 , 0, C.EMPTY
+								Long.parseLong(splitTime[1]) , 0 , 0
 						);
 						//load = true;
 					}
@@ -106,7 +106,7 @@ public class RecordLocationSensor extends IntentService
 	public static void resetSettings(){
 		buf_i = 0;
 		last_flush = 0;
-		buffer[0].set(0,0,0,0,0,0, C.EMPTY);
+		buffer[0].set(0,0,0,0,0,0);
 		saveSettings();
 	}
 
@@ -128,7 +128,7 @@ public class RecordLocationSensor extends IntentService
 						p1.getLongitude(),
 						p1.getTime(),
 						speed,
-						p1.getAccuracy(), C.EMPTY
+						p1.getAccuracy()
 				);
 				buf_i++;
 			}

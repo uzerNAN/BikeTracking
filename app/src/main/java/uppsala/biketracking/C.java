@@ -43,8 +43,12 @@ public class C {
     public static final String SETTINGS = "record_settings.txt";
     public static final String TEMPORARY_DATA = "temporary_points.txt";
     public static final String WAITING_TEMPORARY_DATA = "waiting_temporary_points.txt";
-    public static final String WAITING_CORRECTED_DATA = "waiting_points_to_upload.txt";
-    public static final String CORRECTED_DATA = "points_to_upload.txt";
+    //public static final String WAITING_CORRECTED_ROADS = "waiting_roads_to_upload.txt";
+    //public static final String WAITING_CORRECTED_PLACES = "waiting_places_to_upload.txt";
+    //public static final String WAITING_CORRECTED_RANGES = "waiting_ranges_to_upload.txt";
+    public static final String CORRECTED_ROADS = "roads_to_upload.txt";
+    public static final String CORRECTED_PLACES = "places_to_upload.txt";
+    public static final String CORRECTED_RANGES = "ranges_to_upload.txt";
     public static final String RAW_DATA = "points_to_correct.txt";
     public static final String UPLOAD_URL = "http://biketracking.duckdns.org:3000/GPSdata";
     public static final String CORRECT_URL = "https://roads.googleapis.com/v1/snapToRoads";
@@ -74,9 +78,15 @@ public class C {
     public static final String SUCCESS_UPLOAD_TXT = "Data was successfully uploaded to server";
     public static final String SUCCESS_CORRECT_TXT = "Data was successfully corrected with webservice Roads.API";
     public static final String SID_TXT = "SID";
+    public static final String ID_TXT = "ID";
     public static final String SPLIT = "|";
     public static final String TIME_TXT = "TIME";
-    public static final String LAST_LOCATION_TXT = "LAST_LOCATION";
+    public static final String START_LAT_TXT = "startLat";
+    public static final String STOP_LAT_TXT = "stopLat";
+    public static final String START_LON_TXT = "startLon";
+    public static final String STOP_LON_TXT = "stopLon";
+    public static final String START_TIME_TXT = "startTime";
+    public static final String STOP_TIME_TXT = "stopTime";
     public static final String ACCURACY_TXT = "ACCURACY";
     public static final String SPEED_TXT = "SPEED";
     public static final String NEW_LINE = "\r\n";
@@ -98,6 +108,7 @@ public class C {
     public static final String JSON_STR_EQUALS = "\":\"";
     public static final String JSON_VAR_EQUALS = "\":";
     public static final String JSON_STR_COMMA = "\",\"";
+    public static final String JSON_VAR_COMMA = ",\"";
     public static final String JSON_LIST_COMMA = ",";
     public static final String JSON_LIST_START = "[";
     public static final String JSON_LIST_END = "]";
@@ -151,8 +162,9 @@ public class C {
     public static final String CONNECTION_UNAVAILABLE_TXT = "CONNECTION UNAVAILABLE";
     public static final String UPDATE_BUTTON_TXT = "UPDATE_BUTTON";
     public static final String BUTTON_TXT = "BUTTON";
-    public static final String NOT_OK_TXT = "NOT OK";
-    public static final String NO_PID = "NO_PID";
+    public static final String ROADS_TXT = "ROADS";
+    public static final String PLACES_TXT = "PLACES";
+    public static final String RANGES_TXT = "RANGES";
     public static final String _TXT = "";
 
     public static File getSaveDirectory(){
