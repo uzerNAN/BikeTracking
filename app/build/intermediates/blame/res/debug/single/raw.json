@@ -16,12 +16,12 @@
         "source": "C:\\Users\\Sergej\\AndroidStudioProjects\\BikeTracking\\app\\build\\intermediates\\exploded-aar\\com.google.maps.android\\android-maps-utils\\0.4\\res\\raw\\basic_folder.kml"
     },
     {
-        "merged": "C:\\Users\\Sergej\\AndroidStudioProjects\\BikeTracking\\app\\build\\intermediates\\res\\merged\\debug\\raw\\basic_placemark.kml",
-        "source": "C:\\Users\\Sergej\\AndroidStudioProjects\\BikeTracking\\app\\build\\intermediates\\exploded-aar\\com.google.maps.android\\android-maps-utils\\0.4\\res\\raw\\basic_placemark.kml"
-    },
-    {
         "merged": "C:\\Users\\Sergej\\AndroidStudioProjects\\BikeTracking\\app\\build\\intermediates\\res\\merged\\debug\\raw\\inline_style.kml",
         "source": "C:\\Users\\Sergej\\AndroidStudioProjects\\BikeTracking\\app\\build\\intermediates\\exploded-aar\\com.google.maps.android\\android-maps-utils\\0.4\\res\\raw\\inline_style.kml"
+    },
+    {
+        "merged": "C:\\Users\\Sergej\\AndroidStudioProjects\\BikeTracking\\app\\build\\intermediates\\res\\merged\\debug\\raw\\basic_placemark.kml",
+        "source": "C:\\Users\\Sergej\\AndroidStudioProjects\\BikeTracking\\app\\build\\intermediates\\exploded-aar\\com.google.maps.android\\android-maps-utils\\0.4\\res\\raw\\basic_placemark.kml"
     },
     {
         "merged": "C:\\Users\\Sergej\\AndroidStudioProjects\\BikeTracking\\app\\build\\intermediates\\res\\merged\\debug\\raw\\multiple_placemarks.kml",
@@ -68,11 +68,11 @@
         "source": "C:\\Users\\Sergej\\AndroidStudioProjects\\BikeTracking\\app\\build\\intermediates\\exploded-aar\\com.google.maps.android\\android-maps-utils\\0.4\\res\\raw\\extended_data.kml"
     },
     {
-        "merged": "C:\\Users\\Sergej\\AndroidStudioProjects\\BikeTracking\\app\\build\\intermediates\\res\\merged\\debug\\raw\\ground_overlay.kml",
-        "source": "C:\\Users\\Sergej\\AndroidStudioProjects\\BikeTracking\\app\\build\\intermediates\\exploded-aar\\com.google.maps.android\\android-maps-utils\\0.4\\res\\raw\\ground_overlay.kml"
-    },
-    {
         "merged": "C:\\Users\\Sergej\\AndroidStudioProjects\\BikeTracking\\app\\build\\intermediates\\res\\merged\\debug\\raw\\nested_multigeometry.kml",
         "source": "C:\\Users\\Sergej\\AndroidStudioProjects\\BikeTracking\\app\\build\\intermediates\\exploded-aar\\com.google.maps.android\\android-maps-utils\\0.4\\res\\raw\\nested_multigeometry.kml"
+    },
+    {
+        "merged": "C:\\Users\\Sergej\\AndroidStudioProjects\\BikeTracking\\app\\build\\intermediates\\res\\merged\\debug\\raw\\ground_overlay.kml",
+        "source": "C:\\Users\\Sergej\\AndroidStudioProjects\\BikeTracking\\app\\build\\intermediates\\exploded-aar\\com.google.maps.android\\android-maps-utils\\0.4\\res\\raw\\ground_overlay.kml"
     }
 ]
